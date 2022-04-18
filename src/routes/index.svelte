@@ -1,8 +1,7 @@
 <script lang="ts">
-    import { LiteModeStore as liteMode } from "../store/LiteModeStore";
+    import LiteModeStore from "../store/LiteModeStore";
+    import Lite from "../views/Lite.svelte";
+    import Normal from "../views/Normal.svelte";
 </script>
 
-<main>
-    <h1 class="h3">happyModals{$liteMode ? "-lite" : ""}</h1>
-    
-</main>
+{#if $LiteModeStore} <Lite /> {:else} <Normal />{/if}

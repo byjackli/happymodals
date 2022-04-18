@@ -40,16 +40,16 @@ function observeClicks(event) {
 }
 // handles click events not within modal
 function listenToCloseClicks(event) {
-    const closeBtn = event.target.closest('.modal-close'),
+    const clickedModal = event.target.closest('*[role="dialog"]'),
         clickedBackdrop = event.target.closest(".modal-backdrop"),
-        clickedModal = event.target.closest('*[role="dialog"]');
+        clickedClose = clickedBackdrop || event.target.closest('.modal-close')?.parentElement.nextElementSibling;
 
     function isSelf(track, clicked) { return track.indexOf(clicked) === track.length - 1 }
 
-    if (!clickedBackdrop && !clickedModal) masterkey()
-    else if (!clickedBackdrop && !isSelf(trackModal, clickedModal)) masterkey(trackDepth - trackModal.indexOf(clickedModal) - 1)
-    else if (clickedBackdrop && !isSelf(trackBackdrop, clickedBackdrop)) masterkey(trackDepth - trackBackdrop.indexOf(clickedBackdrop))
-    else if (clickedBackdrop || closeBtn) closeModal()
+    if (!clickedClose && !clickedModal) masterkey()
+    else if (!clickedClose && !isSelf(trackModal, clickedModal)) masterkey(trackDepth - trackModal.indexOf(clickedModal) - 1)
+    else if (clickedClose && !isSelf(trackBackdrop, clickedClose)) masterkey(trackDepth - trackBackdrop.indexOf(clickedClose))
+    else if (isSelf(trackBackdrop, clickedClose)) closeModal()
 }
 // traps focus within most recent active modal
 function trapFocus(event) {
@@ -228,7 +228,6 @@ function closeModal() {
     if (trackDepth) resumePreviousModal()           // if there are still modals, update focusable
     else {                                          // perform only when last modal is closed
         body.removeEventListener('keydown', trapFocus);
-        backdrop.removeEventListener('click', closeModal);
         scrollLock(false);
         ariaHideRest(false);
     }

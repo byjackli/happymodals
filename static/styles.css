@@ -16,7 +16,10 @@
     --title: 'Noto Sans', sans-serif;
     --body: 'Noto Sans', sans-serif;
     --code: 'Roboto Mono', monospace;
+
     --pill: 69em;
+    --almostpill: 1.5em;
+    --h-navmain: 134px;
 }
 
 
@@ -101,10 +104,49 @@ main {
 }
 
 
+/* BUTTON */
+button.forTab {
+    padding: 0;
+    background-color: transparent;
+    margin: 0;
+    border: none;
+    text-decoration: underline;
+}
+button {
+    padding: 1em 1.5em;
+    margin: 0;
+    border: none;
+    border-radius: var(--almostpill);
+    background-color: var(--accent);
+
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25em;
+}
+button * {
+    color: var(--text);
+    /* opacity: .5; */
+    /* cursor: not-allowed; */
+}
+button:hover:not(:disabled),
+button:focus:not(:disabled) { transform: scale3d(1.05, 1.05, 1); }
+button:active:not(:disabled) { transform: scale3d(.95, .95, 1); }
+button:disabled { opacity: .5; }
+
+
 /* MAIN NAV */
 nav#main {
-    max-width: 1920px;
-    padding: 3em 5em;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: var(--h-navmain);
+    max-width: 1912px;
+    padding: 0 5em;
+    padding-top: 2em;
     margin: auto;
     background-color: var(--background);
 
@@ -130,7 +172,7 @@ nav#main ul {
 }
 nav#main ul * {
     text-decoration: none;
-    font-size: 1.35em;
+    font-size: 1.15em;
     font-weight: bold;
 }
 
@@ -190,7 +232,7 @@ div.logo-text span:first-of-type {
 }
 .switch div { 
     position: absolute;
-    top: .2em;
+    top: .25em;
     left: .25em;
     min-width: 1.35em;
     min-height: 1.35em;
@@ -201,3 +243,119 @@ div.logo-text span:first-of-type {
 }
 .switch .lite-mode-on { left: 2.2rem; }
 .switch-container span { font-weight: bold; }
+
+
+/* PAGE */
+/* home */
+main#home { 
+    max-height: 100vh;
+    overflow: auto;
+    scroll-snap-type: y proximity; 
+}
+
+
+/* VIEWS */
+section {
+    min-height: 100vh;
+    padding: 0 5em;
+    padding-top: calc(var(--h-navmain) + 25vh);
+    scroll-snap-align: start;
+}
+
+section.intro, 
+section.intro .title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+}
+section.intro .title {
+    padding-bottom: 2em;
+}
+section.intro h1 span {
+    font-size: inherit;
+    font-weight: inherit;
+    font-style: italic;
+}
+
+
+/* HOWIW */
+.howiw {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: calc(var(--h-navmain) + 2em);
+}
+.howiw span.h4 {
+    font-weight: bold;
+    padding-bottom: .5em;
+}
+.howiw .controls {
+    display: flex;
+    flex-direction: row;
+    gap: 1.25em;
+}
+.howiw .main {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -35%, 0);
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 3em;
+}
+.howiw .summary {
+    width: 34.5ch;
+    padding-top: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 2em;
+}
+.howiw .summary ul { padding-left: 2em; }
+.howiw .diagram div {    
+    width: calc(100% - 1em);
+    height: fit-content;
+    padding: 10px;
+    padding-top: 5px;
+    margin-left: 1em;
+    
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 0.5em;
+}
+.howiw .diagram .true {
+    max-height: 0px !important;
+    padding: 0px 10px !important;
+    overflow: hidden !important;
+}
+.howiw .diagram .html {
+    min-width: 22.5em;
+    min-height: 25em;
+    max-width: 22.5em;
+    max-height: 25em;
+    background-color: rgb(191, 255, 213);
+    border: solid var(--text) 1px;
+    overflow-y: scroll;
+}
+.howiw .diagram .html.scroll-true { 
+    padding-right: 16px;
+    overflow: hidden !important; 
+}
+.howiw .diagram .body { background-color: rgb(191, 224, 255); }
+.howiw .diagram .section { min-height: 8em; }
+.howiw .diagram .button { 
+    padding-bottom: 5px;
+    background-color: rgb(222, 150, 150); 
+    flex-grow: 0;
+}
+.howiw .diagram .dialog { background-color: rgb(190, 150, 222); }
+.howiw .diagram .modal-manager { background-color: rgb(133, 190, 243); }
+
+
+/* HIGHER ORDER */
+.forTab { opacity: 0; }
+.forTab:focus { opacity: 1; }

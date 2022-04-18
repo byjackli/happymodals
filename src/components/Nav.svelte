@@ -1,13 +1,14 @@
 <script>
     import Logo from "./Logo.svelte";
     import LiteModeSwitch from "./LiteModeSwitch.svelte";
+    import LiteModeStore from "../store/LiteModeStore";
 </script>
 
 <nav id="main">
     <a class="lhs" href="/" title="home">
         <Logo />
         <div class="logo-text">
-            <span>happy modals</span>
+            <span>happy modals{$LiteModeStore ? " (lite)" : ""}</span>
             <span>make modals assitive-technology-friendly</span>
         </div>
     </a>
