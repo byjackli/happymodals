@@ -1,10 +1,13 @@
 # [Happy Modals](https://happymodals.com) &middot; [![GitHub license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](/LICENSE) [![npm version](https://img.shields.io/npm/v/react.svg?style=flat)](https://www.npmjs.com/package/happymodals)
+**All links are inactive, the website is currently offline. Everything is expected to be fully functional by Friday, April 22, 2022.**
 
 Happy Modals allows developers a stress-free experience of implementing modals (aka dialogs).
 
-* **Barebones:** To minimize design influences, Happy Modals only considers the bare minimum user accessibility requirements. This leaves room for the develoepr and designer to get creative.
+* **Barebones:** To minimize design influences, Happy Modals only considers the bare minimum user accessibility requirements. This leaves room for the develoepr and designer to get creative.* 
+**Accessibility:** In addition to end-to-end Playwright tests, this package is also manually tested on all major devices against all major browser engines and major assistant technologies.
 * **Dumb-Simple:** The most simple way to get started is creating an element with the class "modal-open" that is immediately preceeded by an element with the role="dialog" attribute.
-* **Accessibility:** Tested on all major devices against all major browser engines and major assistant technologies.
+
+[Learn how to use Happy Modals](https://happymodals.com/docs/getting-started).
 
 ## Lite vs Standard version
 
@@ -32,4 +35,32 @@ There is nothing out there (..yet) that gets any easier than this.
 
 Start now at [happymodals.com/docs](https://happymodals.com/docs)!
 
-The documentation is divided into 3 sections, how it works, examples, and installation. There are two different versions of Happy Modals, a lite version and a standard version. You can access any version of the documentation by the "version" toggle on the upper-right-hand corner of the website.
+There are two different versions of Happy Modals, a lite version and a standard version. You can access any version of the documentation by the "version" toggle on the upper-right-hand corner of the website.
+
+The documentation for each version is divided into 3 sections:
+* [How it Works](https://happymodals.com/docs/howitworks)
+* [Examples](https://happymodals.com/docs/examples)
+* [Installation](https://happymodals.com/docs/installation)
+
+You can improve it by sending pull requests to [the same repository](https://github.com/byjackli/happymodals).
+
+
+## Contributing
+Open to proposals with crazy changes, expect lengthy discussions. This is a relatively small project, so there are currently no strict templates and rules.
+
+Just use the following keywords for their respective changes:
+* `[DOCS]`
+* `[PATCH]`
+* `[BREAKING]`
+
+Note that official npm releases abide by [semantic versioning](https://semver.org/), see [changelog](./CHANGELOG.md) for the complete record.
+
+
+### [Code of Conduct](./CODE_OF_CONDUCT.md)
+
+Happy Modals has adopted a Code of Conduct that we expect project participants to adhere to. Please read [the full text](./CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be tolerated.
+
+
+### License
+
+Happy Modals is [Apache 2.0 licensed](./LICENSE).
