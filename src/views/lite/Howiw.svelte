@@ -165,7 +165,7 @@
                     div id="modal-manager"
                     <div
                         class="dialog {disabled['dialog-pt2']}"
-                        style="background-color: rgba(190, 150, 222,{opacity[
+                        style="background-color: rgba(217, 199, 255,{opacity[
                             'dialog-pt2'
                         ]}); color: rgba(28,28,28,{opacity['dialog-pt2']})"
                         disabled={disabled["dialog-pt2"]}
@@ -219,7 +219,7 @@
                         </div>
                         <div
                             class="dialog {disabled['dialog']}"
-                            style="background-color: rgba(190, 150, 222,{opacity[
+                            style="background-color: rgba(217, 199, 255,{opacity[
                                 'dialog'
                             ]}); color: rgba(28,28,28,{opacity['dialog']})"
                             disabled={disabled["dialog"]}

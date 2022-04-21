@@ -1,6 +1,6 @@
 <main class="intro">
     <div>
-        <h1 class="h3">happyModals</h1>
+        <h1 class="h3">happy modals</h1>
         <p>stress-free developer experience + additional features</p>
     </div>
     <ul>
