@@ -1,6 +1,6 @@
 <section class="intro">
     <div class="title">
-        <h1 class="h4">happyModals-<span class="italics">lite</span></h1>
+        <h1 class="h4">happy modals (<span class="italics">lite</span>)</h1>
         <p>very stress-free developer experience</p>
     </div>
     <ol>
