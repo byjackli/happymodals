@@ -1,5 +1,6 @@
 :root {
     --text: #1c1c1c;
+    --white: #fff;
     --background: #fff8be;
     --accent: #d9c7ff;
     --accent1: #8D6752;
@@ -250,7 +251,7 @@ div.logo-text span:first-of-type {
 main#home { 
     max-height: 100vh;
     overflow: auto;
-    scroll-snap-type: y proximity; 
+    /* scroll-snap-type: y proximity;  */
 }
 
 
@@ -258,7 +259,7 @@ main#home {
 section {
     min-height: 100vh;
     padding: 0 5em;
-    padding-top: calc(var(--h-navmain) + 25vh);
+    padding-top: calc(var(--h-navmain) + 2em);
     scroll-snap-align: start;
 }
 
@@ -269,6 +270,7 @@ section.intro .title {
     align-items: center;
     gap: 0.5em;
 }
+.intro { padding-top: calc(var(--h-navmain) + 25vh); }
 section.intro .title {
     padding-bottom: 2em;
 }
@@ -281,10 +283,12 @@ section.intro h1 span {
 
 /* HOWIW */
 .howiw {
+    width: 100%;
+    background-color: var(--text);
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: calc(var(--h-navmain) + 2em);
 }
 .howiw span.h4 {
     font-weight: bold;
@@ -306,6 +310,8 @@ section.intro h1 span {
     align-items: flex-start;
     gap: 3em;
 }
+.howiw .summary * { color: var(--white); }
+.howiw .controls * { color: var(--text); }
 .howiw .summary {
     width: 34.5ch;
     padding-top: 1em;
@@ -345,16 +351,107 @@ section.intro h1 span {
     padding-right: 16px;
     overflow: hidden !important; 
 }
-.howiw .diagram .body { background-color: rgb(191, 224, 255); }
 .howiw .diagram .section { min-height: 8em; }
 .howiw .diagram .button { 
     padding-bottom: 5px;
-    background-color: rgb(222, 150, 150); 
     flex-grow: 0;
 }
-.howiw .diagram .dialog { background-color: rgb(190, 150, 222); }
-.howiw .diagram .modal-manager { background-color: rgb(133, 190, 243); }
 
+
+.examples {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+}
+.card-container {
+    padding-top: 1em;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2em;
+}
+
+.card .title, .card .desc * { color: var(--white); }
+.card {
+    height: 22em;
+    padding: 2.5em;
+    background-color: var(--text);
+    
+    border-radius: var(--almostpill);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1em;
+}
+.card .desc {
+    margin-bottom: 1em;
+    flex-grow: 1;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+}
+.card .samples {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5em;
+}
+.inputs {    
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1em;
+}
+.inputs input {
+    width: 100%;
+    padding: 0.5em 1.5em;
+    border: solid 1px var(--accent);
+    border-radius: var(--almostpill);
+    flex-shrink: 1;
+    font-size: 1em;
+}
+#custom-bg1 {
+    width: 85vw;
+    height: 85vh;
+    background-color: #2369df80;
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+#custom-close1 {
+    width: 2em;
+    height: 2em;
+    background-color: #ac1a1a;
+
+    color: var(--white);
+    font-weight: bold;
+
+    position: absolute;
+    top: -3em;
+    right: 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+div[role="dialog"] {
+    width: 50vw;
+    height: 50vh;
+    padding: 3em;
+    background-color: var(--white);
+    border-radius: 4px;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+div[role="dialog"] .container {
+    overflow-y: auto;
+}
 
 /* HIGHER ORDER */
 .forTab { opacity: 0; }

@@ -250,6 +250,6 @@ function resumePreviousModal() {
     updateFocusable(trackModal[trackDepth - 1]);
 }
 
-window.onload = init;
+// window.onload = init;
 
 export default init
