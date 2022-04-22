@@ -362,6 +362,8 @@ section.intro h1 span {
 .examples {
     height: fit-content;
     min-height: unset;
+    padding-bottom: 5em;
+
     display: flex;
     flex-direction: column;
     gap: 1.5em;
@@ -441,6 +443,16 @@ section.intro h1 span {
     align-items: center;
 }
 
+
+/* Installation */
+.install * { color: var(--white); }
+.install {
+    width: 100%;
+    background-color: var(--text);
+}
+
+
+/* DIALOG */
 div[role="dialog"] {
     width: 50vw;
     height: 50vh;

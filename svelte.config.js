@@ -8,11 +8,11 @@ const config = {
 	preprocess: preprocess(),
 
 	kit: {
-		adapter: adapter()
-	},
-	vite: {
-		ssr: {
-			external: ['firebase']
+		adapter: adapter({ fallback: "index.html" }),
+		vite: {
+			ssr: {
+				external: ['firebase']
+			}
 		}
 	}
 };
