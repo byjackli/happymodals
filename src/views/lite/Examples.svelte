@@ -1,15 +1,21 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import initModals from "$lib/modals-lite";
+    import initModals from "$lib/components/ModalLite";
     import Card from "../../components/Card.svelte";
     import Note from "../../components/Note.svelte";
     import LiteModeSwitch from "../../components/LiteModeSwitch.svelte";
+
+    export let isolated = true;
 
     onMount(() => initModals());
 </script>
 
 <section class="examples">
-    <h1 class="h3">Examples</h1>
+    {#if isolated}
+        <h1 class="h3">Examples</h1>
+    {:else}
+        <h2 class="h3">Examples</h2>
+    {/if}
     <p>
         Each category has at least one example, you are invited to try all of
         them!

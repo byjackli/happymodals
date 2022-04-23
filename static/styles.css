@@ -359,7 +359,7 @@ section.intro h1 span {
 }
 
 
-.examples {
+.examples, .install {
     height: fit-content;
     min-height: unset;
     padding-bottom: 5em;
