@@ -14,7 +14,7 @@
     </a>
     <div class="rhs">
         <ul>
-            <li><a href="/docs/sample">sample</a></li>
+            <li><a href="/docs/examples">examples</a></li>
             <li><a href="/docs">docs</a></li>
             <li>
                 <a
