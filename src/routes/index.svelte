@@ -1,7 +1,5 @@
 <script lang="ts">
-    import LiteModeStore from "../store/LiteModeStore";
-    import Lite from "../views/Lite.svelte";
-    import Normal from "../views/Normal.svelte";
+    import { default as Index } from "./docs/index.svelte";
 </script>
 
-{#if $LiteModeStore} <Lite /> {:else} <Normal />{/if}
+<Index />

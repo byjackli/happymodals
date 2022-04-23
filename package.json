@@ -1,7 +1,7 @@
 {
   "name": "happymodals",
   "version": "0.0.1",
-  "description": "Happy Modals - low-level accessible forms designed for Svelte programmers.",
+  "description": "Happy Modals - Create accessible modals with a stress-free developer experience.",
   "license": "Apache-2.0",
   "author": "Jack Li",
   "homepage": "https://happymodals.com",

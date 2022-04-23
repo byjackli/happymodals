@@ -7,7 +7,7 @@
 
 <main id="home">
     <Intro />
-    <!-- <Howiw />
+    <Howiw />
     <Examples />
-    <Install /> -->
+    <Install />
 </main>
