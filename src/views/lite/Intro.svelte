@@ -1,6 +1,14 @@
+<script lang="ts">
+    export let isolated = true;
+</script>
+
 <section class="intro">
     <div class="title">
-        <h1 class="h4">happy modals (<span class="italics">lite</span>)</h1>
+        {#if isolated}
+            <h1 class="h4">happy modals (<span class="italics">lite</span>)</h1>
+        {:else}
+            <h1 class="h4">happy modals (<span class="italics">lite</span>)</h1>
+        {/if}
         <p>very stress-free developer experience</p>
     </div>
     <ol>

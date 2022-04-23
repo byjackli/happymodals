@@ -1,4 +1,5 @@
 <script lang="ts">
+    export let isolated = true;
     const summary = [
             {
                 step: "-",
@@ -113,7 +114,11 @@
     <div class="main">
         <div class="summary">
             <div>
-                <h1 class="h4">how it works</h1>
+                {#if isolated}
+                    <h1 class="h4">how it works</h1>
+                {:else}
+                    <h2 class="h4">how it works</h2>
+                {/if}
                 <div class="controls">
                     <button
                         disabled={!cursor}

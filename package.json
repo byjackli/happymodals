@@ -1,6 +1,31 @@
 {
   "name": "happymodals",
   "version": "0.0.1",
+  "description": "Happy Modals - low-level accessible forms designed for Svelte programmers.",
+  "license": "Apache-2.0",
+  "author": "Jack Li",
+  "homepage": "https://happymodals.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/byjackli/happymodals"
+  },
+  "bugs": {
+    "url": "https://github.com/byjackli/happymodals/issues"
+  },
+  "keywords": [
+    "svelte",
+    "modals",
+    "javascript",
+    "typescript",
+    "ada",
+    "wcag",
+    "accessible",
+    "dialog"
+  ],
+  "main": "./components/Modal.svelte",
+  "exports": {
+    ".": "./components/Modal.svelte"
+  },
   "scripts": {
     "dev": "svelte-kit dev",
     "build": "svelte-kit build",
@@ -13,6 +38,7 @@
     "lint": "eslint --ignore-path .gitignore ."
   },
   "devDependencies": {
+    "@byjackli/highlighter": "^1.0.6",
     "@playwright/test": "^1.21.0",
     "@sveltejs/adapter-auto": "next",
     "@sveltejs/adapter-static": "^1.0.0-next.29",

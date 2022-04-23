@@ -6,8 +6,8 @@
 </script>
 
 <main id="home">
-    <Intro />
-    <Howiw />
-    <Examples />
-    <Install />
+    <Intro isolated={false} />
+    <Howiw isolated={false} />
+    <Examples isolated={false} />
+    <Install isolated={false} />
 </main>
