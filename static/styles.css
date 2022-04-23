@@ -450,6 +450,13 @@ section.intro h1 span {
     width: 100%;
     background-color: var(--text);
 }
+.install .collection {
+    display: flex;
+    flex-direction: column;
+    gap: 3em;
+}
+.install .collection > div > div { padding-bottom: 1.5em; }
+.install .collection p { padding-bottom: .5em; }
 
 
 /* DIALOG */
