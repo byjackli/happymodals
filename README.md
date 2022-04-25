@@ -1,5 +1,4 @@
 # [Happy Modals](https://happymodals.com) &middot; [![GitHub license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](/LICENSE) [![npm version](https://img.shields.io/npm/v/react.svg?style=flat)](https://www.npmjs.com/package/happymodals)
-**All links are inactive, the website is currently offline. Everything is expected to be fully functional by Friday, April 22, 2022.**
 
 Happy Modals allows developers a stress-free experience of implementing modals (aka dialogs).
 
