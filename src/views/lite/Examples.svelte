@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import initModals from "$lib/components/ModalLite";
+    import { onDestroy, onMount } from "svelte";
+    import initModals, { decom } from "$lib/components/ModalLite";
     import Card from "../../components/Card.svelte";
     import Note from "../../components/Note.svelte";
     import LiteModeSwitch from "../../components/LiteModeSwitch.svelte";
@@ -8,6 +8,7 @@
     export let isolated = true;
 
     onMount(() => initModals());
+    onDestroy(() => decom());
 </script>
 
 <section class="examples">

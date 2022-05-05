@@ -1,52 +1,236 @@
 import { writable } from "svelte/store"
-import type { ModalData } from "$lib/types/Modal";
+import type { Local, ModalData } from "$lib/types/Modal";
 
-const local = { body: undefined, trackDepth: 0, trackOpen: [], trackClose: [], trackPreventBackdrop: [], trackScrollLock: [] };
+const local: Local = { body: undefined, manager: undefined, trackDepth: 0, trackOrigin: [], trackContainer: [], trackPreventBackdrop: [], trackClose: [], trackResume: [], trackScrollLock: [], focusable: undefined };
 export const ModalStore = writable({ ...local })
 
-export function update(record: ModalData): void {
-    for (const [keys, values] of Object.entries(record))
-        local[keys] = values
+export function addModal(record: ModalData): void {
+    if (record !== undefined)
+        for (const [keys, values] of Object.entries(record))
+            local[keys] = values
 
     ModalStore.update(() => ({ ...local }))
 }
 
-// export function initModal(): void {
-//     let body = local.body;
+// initialize setp up automatic modal manager
+export function init(): void {
+    const body = document.getElementsByTagName('html')[0],
+        head = document.getElementsByTagName("head")[0],
+        manageModal = createModalManager(),
+        manageCSS = createCSSManager()
 
-//     body = document.getElementsByTagName('html')[0];
-//     body.addEventListener('click', observeClicks);
-//     if (!document.getElementById('modal-manager')) {
-//         modalManager = createModalManager();
-//         body.prepend(modalManager);
-//     }
-//     if (!document.getElementById('modal-css')) createCSSManager()
-// }
-// function observeClicks(event) {
-//     const openBtn = event.target.closest('.modal-open');
+    body.addEventListener('click', observeClicks, { capture: true });
+    body.prepend(manageModal)
+    head.prepend(manageCSS)
 
-//     if (trackDepth) listenToCloseClicks(event);
-//     if (openBtn) openModal(openBtn);
-// }
-// // handles click events not within modal
-// function listenToCloseClicks(event) {
-//     const clickedModal = event.target.closest('*[role="dialog"]'),
-//         clickedBackdrop = event.target.closest(".modal-backdrop"),
-//         clickedClose = clickedBackdrop || event.target.closest('.modal-close')?.parentElement.nextElementSibling;
-
-//     function isSelf(track, clicked) { return track.indexOf(clicked) === track.length - 1 }
-
-//     if (!clickedClose && !clickedModal) masterkey()
-//     else if (!clickedClose && !isSelf(trackModal, clickedModal)) masterkey(trackDepth - trackModal.indexOf(clickedModal) - 1)
-//     else if (clickedClose && !isSelf(trackBackdrop, clickedClose)) masterkey(trackDepth - trackBackdrop.indexOf(clickedClose))
-//     else if (isSelf(trackBackdrop, clickedClose)) closeModal()
-// }
-
-// always closes the top-most modal, uses the corresponding close function
-export function close(): void {
-
-    const close = local.trackClose.pop()
-    close();
+    local.body = body
+    local.manager = manageModal
+    ModalStore.update(() => ({ ...local }))
 }
+
+// listens for click events on modal open and close buttons
+function observeClicks(event: MouseEvent): void {
+    console.info("observing a click")
+    if (local.trackDepth) listenToCloseClicks(event);
+}
+
+// handles click events not within modal
+function listenToCloseClicks(event: MouseEvent) {
+    const target = event.target as HTMLElement,
+        clickedModal = target.closest('*[role="dialog"]'),
+        clickedBackdrop = target.closest(".modal-backdrop"),
+        clickedClose = clickedBackdrop || target.closest('.modal-close')?.parentElement.nextElementSibling,
+        preventBackdrop = local.trackPreventBackdrop[local.trackPreventBackdrop.length - 1],
+        depthOfModal = Number.parseInt(clickedModal?.parentElement.getAttribute("id")),
+        depthOfBackdrop = Number.parseInt(clickedClose?.parentElement.getAttribute("id"));
+    console.info("acting close clicks", { target, clickedModal, local })
+    function isSelf(clicked: number) { return clicked === local.trackDepth }
+
+    if (clickedBackdrop && preventBackdrop) return
+    if (!clickedClose && !clickedModal) masterkey()
+    else if (!clickedClose && !isSelf(depthOfModal)) masterkey(local.trackDepth - depthOfModal - 1)
+    else if (clickedClose && !isSelf(depthOfBackdrop)) masterkey(local.trackDepth - depthOfBackdrop)
+    else if (isSelf(depthOfBackdrop)) close()
+    local.trackPreventBackdrop.pop()
+}
+// traps focus within most recent active modal
+function trapFocus(event: KeyboardEvent): void {
+    const focusEnd = local.focusable.length - 1,
+        focusCur = local.focusable.indexOf(document.activeElement as HTMLElement);
+
+    if (event.key === `End` || (event.key === `Tab` && event.shiftKey && !focusCur)) {
+        event.preventDefault();
+        local.focusable[focusEnd].focus();
+    } else if (
+        event.key === `Home` ||
+        (event.key === `Tab` && !event.shiftKey && focusCur === focusEnd)
+    ) {
+        event.preventDefault();
+        local.focusable[0].focus();
+    } else if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+    }
+}
+
+// create CSS classes
+function createCSSManager(): HTMLElement {
+    const styles = document.createTextNode(`
+        .modal-inactive { display: none !important; }
+        .modal-scroll-locked { overflow: hidden !important; }
+        .modal-container {
+            position: fixed;
+            width: 0px;
+            height: 0px;
+        }
+        .modal-backdrop {
+            width: 100vw; 
+            height: 100vh; 
+            position: fixed;
+            top: 0; left: 0; 
+            background-color: rgba(0,0,0,0.8); 
+        }
+        .modal-close {
+            padding: 10px;
+            background-color: white;
+            color: black;
+        }
+    `),
+        styleNode = document.createElement("style");
+
+    styleNode.setAttribute("id", "modal-css")
+    styleNode.appendChild(styles)
+    return styleNode
+}
+// Modal Manager houses all active modals and their respective backdrops
+function createModalManager(): HTMLElement {
+    const div = document.createElement('div');
+    div.setAttribute('id', 'modal-manager');
+    div.setAttribute('style', 'position: fixed; top: 0; left: 0; z-index: 9999;');
+    return div;
+}
+
+// locks and unlocks previous layer from scrolling
+function scrollLock(state: boolean): void {
+    if (state) {
+        const scrollLock = Array.from(document.querySelectorAll(".modal-scroll-lock"))
+        for (const doc of scrollLock) {
+            local.trackScrollLock.push({ doc, top: doc.parentElement.scrollTop })
+            doc.parentElement.classList.add("modal-scroll-locked")
+        }
+    }
+    else {
+        for (const { doc, top } of local.trackScrollLock) {
+            doc.parentElement.classList.remove("modal-scroll-locked")
+            doc.parentElement.scrollTop = top
+        }
+        local.trackScrollLock = []
+    }
+
+
+}
+// toggle aria-hide for all other elements
+function ariaHideRest(bool) {
+    const body = document.getElementsByTagName('body')[0];
+    body.setAttribute('aria-hidden', `${bool}`);
+}
+// return a list of focusable elements baed on passed in modal (html element)
+function updateFocusable(modal) {
+    // // temporarily remove nested dialogs
+    // const modals = modal.querySelectorAll('*[role="dialog"]'),
+    //     temp = [];
+    // for (const modal of modals) {
+    //     temp.push({ sibling: modal.previousElementSibling, modal });
+    //     modal.remove();
+    // }
+
+    // update focusable with list of focusables from most recent modal
+    local.focusable = [
+        ...modal.querySelectorAll(
+            `a[href]:not([disabled]), 
+            button:not([disabled]), 
+            textarea:not([disabled]), 
+            input:not([disabled]), 
+            select:not([disabled]),
+            *[tabindex="0"]`
+        )
+    ];
+
+    // // re-add nested dialogs
+    // for (const { sibling, modal } of temp) sibling.after(modal);
+}
+
+export function openModal(origin: HTMLElement, container: HTMLElement, preventBackdrop: boolean, close: VoidFunction) {
+    console.info("opening modal")
+    const
+        depth = local.trackDepth += 1,
+        modal = container.firstElementChild,
+        backdrop = container.lastElementChild;
+
+    updateFocusable(container);
+    if (depth < 2) {                       // perform only when first modal is opened
+        local.body.addEventListener('keydown', trapFocus);
+        scrollLock(true);
+    }
+    else pausePreviousModal()
+
+    container.remove();                                 // remove modal from where its original location
+
+    local.trackResume.push(document.activeElement as HTMLElement);       // track previous element in focus before a modal was activated
+    local.trackOrigin.push(origin);                       // track the original container of each modal
+    local.trackContainer.push(container);                         // track each all active modals and most recent modal
+    local.trackPreventBackdrop.push(preventBackdrop)
+    local.trackClose.push(close)
+
+    container.setAttribute("style", `z-index: ${depth}`)
+    container.setAttribute("id", `${depth}`)
+    modal.setAttribute('style', `z-index: 2;`);
+    backdrop.setAttribute('style', `z-index: 1;`);
+    local.manager.prepend(container);                 // add backdrop to Modal Manager
+    ariaHideRest(true);
+
+    (modal.firstElementChild as HTMLElement).focus()
+    local.trackDepth = depth
+}
+export function closeModal() {
+    local.trackDepth -= 1; // current level of modal
+    const origin = local.trackOrigin.pop(),
+        container = local.trackContainer.pop(),
+        resume = local.trackResume.pop();
+
+    console.info("closing", local)
+    origin.after(container);                            // put modal back where it was found
+
+    resume.focus();
+
+    if (local.trackDepth) resumePreviousModal()           // if there are still modals, update focusable
+    else {                                          // perform only when last modal is closed
+        local.body.removeEventListener('keydown', trapFocus);
+        scrollLock(false);
+        ariaHideRest(false);
+    }
+}
+function close() {
+    const close = local.trackClose.pop()
+    if (close !== undefined) close()
+    else closeModal()
+}
+// closes all or x number of modals at once
+function masterkey(number = undefined) {
+    let limit = number !== undefined ? number : local.trackDepth
+
+    while (limit) {
+        close()
+        limit--
+    }
+}
+function pausePreviousModal() {
+    local.trackContainer[local.trackDepth - 2].setAttribute("aria-hidden", "true")
+}
+function resumePreviousModal() {
+    local.trackContainer[local.trackDepth - 1].setAttribute("aria-hidden", "false")
+    updateFocusable(local.trackContainer[local.trackDepth - 1]);
+}
+
 
 export default ModalStore

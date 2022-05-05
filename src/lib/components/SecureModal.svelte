@@ -1,6 +1,10 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import ModalStore, { init, update } from "../store/ModalStore";
+    import { afterUpdate, onMount } from "svelte";
+    import ModalStore, {
+        init,
+        openModal,
+        closeModal,
+    } from "../store/ModalStore";
 
     export let beforeOpen: Function | undefined = undefined,
         afterOpen: Function | undefined = undefined,
@@ -10,6 +14,7 @@
 
     let origin: HTMLElement,
         container: HTMLElement,
+        isLoading: boolean = false,
         isOpen: boolean = false;
 
     $: slots = $$props.$$slots;
@@ -17,20 +22,32 @@
 
     function open() {
         beforeOpen && beforeOpen();
-        isOpen = true;
-        manager.prepend(container);
-        afterOpen && afterOpen();
+        isLoading = true;
     }
 
     export function close() {
         beforeClose && beforeClose();
-        isOpen = false;
-        origin.after(container);
+        closeModal();
+        isLoading = true;
         afterClose && afterClose();
     }
     onMount(() => {
         if (!manager) init();
-        if (!preventBackdrop) update({ trackOpen: open, trackClose: close });
+    });
+    afterUpdate(() => {
+        if (isLoading) {
+            if (!isOpen) {
+                openModal(
+                    origin,
+                    container,
+                    preventBackdrop,
+                    beforeClose || afterClose ? close : undefined
+                );
+                afterOpen && afterOpen();
+            }
+            isLoading = false;
+            isOpen = !isOpen;
+        }
     });
 
     // check for toggle
@@ -54,15 +71,16 @@
         </div>
     {/if}
 </div>
-<div
-    class="modal-container {isOpen}"
-    aria-hidden={!isOpen}
-    bind:this={container}
->
-    <slot name="modal">
-        <div role="dialog" />
-    </slot>
-    <slot name="backdrop">
-        <div class="modal-backdrop" aria-hidden="true" on:click={close} />
-    </slot>
-</div>
+{#if isLoading || isOpen}
+    <div class="modal-container" bind:this={container}>
+        <div role="dialog">
+            <slot name="close">
+                <button class="modal-close">Close Modal</button>
+            </slot>
+            <slot name="modal" />
+        </div>
+        <slot name="backdrop">
+            <div class="modal-backdrop" aria-hidden="true" on:click={close} />
+        </slot>
+    </div>
+{/if}
