@@ -1,13 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import initModals from "$lib/components/ModalLite";
     // import Card from "../../components/Card.svelte";
     import Note from "../../components/Note.svelte";
-    // import LiteModeSwitch from "../../components/LiteModeSwitch.svelte";
+    import Modal from "$lib/components/Modal.svelte";
 
     export let isolated = true;
-
-    onMount(() => initModals());
 </script>
 
 <section class="examples">
@@ -16,6 +13,34 @@
     {:else}
         <h2 class="h3">Examples</h2>
     {/if}
+    <Modal>
+        <div slot="modal">
+            <Modal>
+                <div slot="modal">
+                    <div class="inputs">
+                        <input type="text" placeholder="1" />
+                        <input type="text" placeholder="2" />
+                        <input type="text" placeholder="3" />
+                        <input type="text" placeholder="4" />
+                        <input type="text" placeholder="5" />
+                        <input type="text" placeholder="6" />
+                        <input type="text" placeholder="7" />
+                        <input type="text" placeholder="8" />
+                    </div>
+                </div>
+            </Modal>
+            <div class="inputs">
+                <input type="text" placeholder="1" />
+                <input type="text" placeholder="2" />
+                <input type="text" placeholder="3" />
+                <input type="text" placeholder="4" />
+                <input type="text" placeholder="5" />
+                <input type="text" placeholder="6" />
+                <input type="text" placeholder="7" />
+                <input type="text" placeholder="8" />
+            </div>
+        </div>
+    </Modal>
 
     <Note>
         <span class="material-icons" slot="icon">info</span>

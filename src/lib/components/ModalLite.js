@@ -8,7 +8,7 @@ let body = undefined,           // HTMLElement of document body
     trackScrollLock = [],       // position of scroll before locking
     focusable = undefined;      // list of focusable elements
 
-// setp up automatic modal manager
+// initialize setp up automatic modal manager
 function init() {
     body = document.getElementsByTagName('html')[0];
     body.addEventListener('click', observeClicks);
@@ -18,6 +18,16 @@ function init() {
     }
     if (!document.getElementById('modal-css')) createCSSManager()
     hideModalThings()
+}
+// decomission: clear automatic modal manager
+export function decom() {
+
+    if (body) {
+        body.removeEventListener("click", observeClicks)
+        masterkey()
+        modalManager.remove()
+        modalManager = undefined
+    }
 }
 
 // hide modals and their backdrop(if they have one)
