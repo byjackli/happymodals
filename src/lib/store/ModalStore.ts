@@ -1,16 +1,11 @@
 import { writable } from "svelte/store"
 import type { Local, ModalData } from "$lib/types/Modal";
 
-const local: Local = { body: undefined, manager: undefined, trackDepth: 0, trackOrigin: [], trackContainer: [], trackPreventBackdrop: [], trackClose: [], trackResume: [], trackScrollLock: [], focusable: undefined };
+const local: Local = {
+    body: undefined, manager: undefined, focusable: undefined, trackDepth: 0,
+    trackContainer: [], trackModal: [], trackPreventBackdrop: [], trackClose: [], trackResume: [], trackScrollLock: []
+};
 export const ModalStore = writable({ ...local })
-
-export function addModal(record: ModalData): void {
-    if (record !== undefined)
-        for (const [keys, values] of Object.entries(record))
-            local[keys] = values
-
-    ModalStore.update(() => ({ ...local }))
-}
 
 // initialize setp up automatic modal manager
 export function init(): void {
@@ -30,7 +25,6 @@ export function init(): void {
 
 // listens for click events on modal open and close buttons
 function observeClicks(event: MouseEvent): void {
-    console.info("observing a click")
     if (local.trackDepth) listenToCloseClicks(event);
 }
 
@@ -41,9 +35,9 @@ function listenToCloseClicks(event: MouseEvent) {
         clickedBackdrop = target.closest(".modal-backdrop"),
         clickedClose = clickedBackdrop || target.closest('.modal-close')?.parentElement.nextElementSibling,
         preventBackdrop = local.trackPreventBackdrop[local.trackPreventBackdrop.length - 1],
-        depthOfModal = Number.parseInt(clickedModal?.parentElement.getAttribute("id")),
-        depthOfBackdrop = Number.parseInt(clickedClose?.parentElement.getAttribute("id"));
-    console.info("acting close clicks", { target, clickedModal, local })
+        depthOfModal = Number.parseInt(clickedModal?.getAttribute("id")),
+        depthOfBackdrop = Number.parseInt(clickedClose?.previousElementSibling.getAttribute("id"));
+        
     function isSelf(clicked: number) { return clicked === local.trackDepth }
 
     if (clickedBackdrop && preventBackdrop) return
@@ -79,16 +73,23 @@ function createCSSManager(): HTMLElement {
         .modal-inactive { display: none !important; }
         .modal-scroll-locked { overflow: hidden !important; }
         .modal-container {
+            position: absolute;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+        }
+        .modal, .modal-backdrop {
             position: fixed;
-            width: 0px;
-            height: 0px;
+            top: 0; left: 0; 
         }
         .modal-backdrop {
             width: 100vw; 
             height: 100vh; 
-            position: fixed;
-            top: 0; left: 0; 
             background-color: rgba(0,0,0,0.8); 
+        }
+        .modal-open, .modal-close {
+            width: fit-content;
+            height: fit-content;
         }
         .modal-close {
             padding: 10px;
@@ -160,12 +161,11 @@ function updateFocusable(modal) {
     // for (const { sibling, modal } of temp) sibling.after(modal);
 }
 
-export function openModal(origin: HTMLElement, container: HTMLElement, preventBackdrop: boolean, close: VoidFunction) {
-    console.info("opening modal")
+export function openModal(container: HTMLElement, preventBackdrop: boolean, close: VoidFunction) {
     const
         depth = local.trackDepth += 1,
-        modal = container.firstElementChild,
-        backdrop = container.lastElementChild;
+        modal = container.firstElementChild as HTMLElement,
+        backdrop = container.lastElementChild as HTMLElement;
 
     updateFocusable(container);
     if (depth < 2) {                       // perform only when first modal is opened
@@ -174,19 +174,19 @@ export function openModal(origin: HTMLElement, container: HTMLElement, preventBa
     }
     else pausePreviousModal()
 
-    container.remove();                                 // remove modal from where its original location
+    modal.remove();                                 // remove modal from where its original location
 
     local.trackResume.push(document.activeElement as HTMLElement);       // track previous element in focus before a modal was activated
-    local.trackOrigin.push(origin);                       // track the original container of each modal
     local.trackContainer.push(container);                         // track each all active modals and most recent modal
+    local.trackModal.push(modal);                         // track each all active modals and most recent modal
     local.trackPreventBackdrop.push(preventBackdrop)
     local.trackClose.push(close)
 
-    container.setAttribute("style", `z-index: ${depth}`)
-    container.setAttribute("id", `${depth}`)
-    modal.setAttribute('style', `z-index: 2;`);
-    backdrop.setAttribute('style', `z-index: 1;`);
-    local.manager.prepend(container);                 // add backdrop to Modal Manager
+    backdrop.setAttribute('style', `z-index: ${depth * 2 - 1};`);
+    modal.setAttribute('style', `z-index: ${depth * 2};`);
+    modal.setAttribute('id', `${depth}`);
+    local.manager.prepend(backdrop);                 // add backdrop to Modal Manager
+    local.manager.prepend(modal);                 // add backdrop to Modal Manager
     ariaHideRest(true);
 
     (modal.firstElementChild as HTMLElement).focus()
@@ -194,12 +194,13 @@ export function openModal(origin: HTMLElement, container: HTMLElement, preventBa
 }
 export function closeModal() {
     local.trackDepth -= 1; // current level of modal
-    const origin = local.trackOrigin.pop(),
-        container = local.trackContainer.pop(),
+    const container = local.trackContainer.pop(),
+        modal = local.trackModal.pop(),
+        backdrop = modal.nextElementSibling,
         resume = local.trackResume.pop();
 
-    console.info("closing", local)
-    origin.after(container);                            // put modal back where it was found
+    container.appendChild(modal);                            // put modal back where it was found
+    container.appendChild(backdrop);                            // put modal back where it was found
 
     resume.focus();
 
@@ -225,11 +226,11 @@ function masterkey(number = undefined) {
     }
 }
 function pausePreviousModal() {
-    local.trackContainer[local.trackDepth - 2].setAttribute("aria-hidden", "true")
+    local.trackModal[local.trackDepth - 2].setAttribute("aria-hidden", "true")
 }
 function resumePreviousModal() {
-    local.trackContainer[local.trackDepth - 1].setAttribute("aria-hidden", "false")
-    updateFocusable(local.trackContainer[local.trackDepth - 1]);
+    local.trackModal[local.trackDepth - 1].setAttribute("aria-hidden", "false")
+    updateFocusable(local.trackModal[local.trackDepth - 1]);
 }
 
 

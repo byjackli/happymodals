@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     // import Card from "../../components/Card.svelte";
     import Note from "../../components/Note.svelte";
-    import Modal from "$lib/components/SecureModal.svelte";
+    import Modal from "$lib/components/Modal.svelte";
 
     export let isolated = true;
 </script>

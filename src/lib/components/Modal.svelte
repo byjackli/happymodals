@@ -1,15 +1,21 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import ModalStore, { init, update } from "../store/ModalStore";
+    import { afterUpdate, onMount } from "svelte";
+    import ModalStore, {
+        init,
+        openModal,
+        closeModal,
+    } from "../store/ModalStore";
 
-    export let beforeOpen: Function | undefined = undefined,
-        afterOpen: Function | undefined = undefined,
-        beforeClose: Function | undefined = undefined,
-        afterClose: Function | undefined = undefined,
-        preventBackdrop = false;
+    export let dynamic: boolean = true,                 // when modal not open, it is removed from the DOM so the DOM is not polluted with unused nodes
+        preventBackdrop = false,                        // clicking on backdrop will not close the modal
+        beforeOpen: Function | undefined = undefined,   // lifecycle hook: call function before opening modal    
+        afterOpen: Function | undefined = undefined,    // lifecycle hook: call function after opening modal
+        beforeClose: Function | undefined = undefined,  // lifecycle hook: call function before closing modal
+        afterClose: Function | undefined = undefined;   // lifecycle hook: call function after closing modal
 
     let origin: HTMLElement,
         container: HTMLElement,
+        isLoading: boolean = false,
         isOpen: boolean = false;
 
     $: slots = $$props.$$slots;
@@ -17,20 +23,27 @@
 
     function open() {
         beforeOpen && beforeOpen();
-        isOpen = true;
-        manager.prepend(container);
-        afterOpen && afterOpen();
+        isLoading = true;
     }
 
     export function close() {
         beforeClose && beforeClose();
-        isOpen = false;
-        origin.after(container);
+        closeModal();
+        isLoading = true;
         afterClose && afterClose();
     }
     onMount(() => {
         if (!manager) init();
-        if (!preventBackdrop) update({ trackOpen: open, trackClose: close });
+    });
+    afterUpdate(() => {
+        if (isLoading) {
+            if (!isOpen) {
+                openModal(container, preventBackdrop, close);
+                afterOpen && afterOpen();
+            }
+            isLoading = false;
+            isOpen = !isOpen;
+        }
     });
 
     // check for toggle
@@ -53,16 +66,22 @@
             </slot>
         </div>
     {/if}
-</div>
-<div
-    class="modal-container {isOpen}"
-    aria-hidden={!isOpen}
-    bind:this={container}
->
-    <slot name="modal">
-        <div role="dialog" />
-    </slot>
-    <slot name="backdrop">
-        <div class="modal-backdrop" aria-hidden="true" on:click={close} />
-    </slot>
+
+    {#if !dynamic || isLoading || isOpen}
+        <div
+            class="modal-container {isOpen}"
+            aria-hidden={!isOpen}
+            bind:this={container}
+        >
+            <div class="modal" role="dialog">
+                <slot name="close">
+                    <button class="modal-close">Close Modal</button>
+                </slot>
+                <slot name="modal" />
+            </div>
+            <slot name="backdrop">
+                <div class="modal-backdrop" aria-hidden="true" />
+            </slot>
+        </div>
+    {/if}
 </div>
