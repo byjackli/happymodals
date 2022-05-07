@@ -1,11 +1,3 @@
-export type ModalData = {
-    trackOrigin: HTMLElement,
-    trackContainer: HTMLElement,
-    trackClose: VoidFunction
-    preventBackdrop: boolean
-    trackScrollLock: boolean
-}
-
 export type Local = {
     body: HTMLElement,
     manager: HTMLElement,
@@ -21,3 +13,5 @@ export type Local = {
     }[]
     focusable: HTMLElement[]
 }
+
+export default Local

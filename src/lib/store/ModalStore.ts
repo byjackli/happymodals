@@ -1,5 +1,5 @@
 import { writable } from "svelte/store"
-import type { Local, ModalData } from "$lib/types/Modal";
+import type Local from "$lib/types/Modal";
 
 const local: Local = {
     body: undefined, manager: undefined, focusable: undefined, trackDepth: 0,
@@ -33,11 +33,11 @@ function listenToCloseClicks(event: MouseEvent) {
     const target = event.target as HTMLElement,
         clickedModal = target.closest('*[role="dialog"]'),
         clickedBackdrop = target.closest(".modal-backdrop"),
-        clickedClose = clickedBackdrop || target.closest('.modal-close')?.parentElement.nextElementSibling,
+        clickedClose = clickedBackdrop || target.closest('.modal-close')?.closest('*[role="dialog"]').nextElementSibling,
         preventBackdrop = local.trackPreventBackdrop[local.trackPreventBackdrop.length - 1],
         depthOfModal = Number.parseInt(clickedModal?.getAttribute("id")),
         depthOfBackdrop = Number.parseInt(clickedClose?.previousElementSibling.getAttribute("id"));
-        
+
     function isSelf(clicked: number) { return clicked === local.trackDepth }
 
     if (clickedBackdrop && preventBackdrop) return
