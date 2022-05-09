@@ -15,7 +15,7 @@ function init() {
     if (!document.getElementById('modal-manager')) {
         modalManager = createModalManager();
         body.prepend(modalManager);
-    }
+    } else { modalManager = document.getElementById('modal-manager') }
     if (!document.getElementById('modal-css')) createCSSManager()
     hideModalThings()
 }

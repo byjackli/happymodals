@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    // import Card from "../../components/Card.svelte";
+    import Card from "../../components/Card.svelte";
     import Note from "../../components/Note.svelte";
     import Modal from "$lib/components/Modal.svelte";
+    import LiteModeSwitch from "../../components/LiteModeSwitch.svelte";
 
     export let isolated = true;
 </script>
@@ -13,40 +13,7 @@
     {:else}
         <h2 class="h3">Examples</h2>
     {/if}
-    <Modal>
-        <div slot="modal">
-            <Modal>
-                <div slot="modal">
-                    <div class="inputs">
-                        <input type="text" placeholder="1" />
-                        <input type="text" placeholder="2" />
-                        <input type="text" placeholder="3" />
-                        <input type="text" placeholder="4" />
-                        <input type="text" placeholder="5" />
-                        <input type="text" placeholder="6" />
-                        <input type="text" placeholder="7" />
-                        <input type="text" placeholder="8" />
-                    </div>
-                </div>
-            </Modal>
-            <div class="inputs">
-                <input type="text" placeholder="1" />
-                <input type="text" placeholder="2" />
-                <input type="text" placeholder="3" />
-                <input type="text" placeholder="4" />
-                <input type="text" placeholder="5" />
-                <input type="text" placeholder="6" />
-                <input type="text" placeholder="7" />
-                <input type="text" placeholder="8" />
-            </div>
-        </div>
-    </Modal>
-
-    <Note>
-        <span class="material-icons" slot="icon">info</span>
-        <p>coming soon</p>
-    </Note>
-    <!-- <p>
+    <p>
         Each category has at least one example, you are invited to try all of
         them!
     </p>
@@ -66,31 +33,35 @@
                 </p>
             </svelte:fragment>
             <svelte:fragment slot="samples">
-                <button class="modal-open">standard</button>
-                <div role="dialog">
-                    <div class="container">
-                        <h4>Things about this modal</h4>
-                        <ol>
-                            <li>✅ active modal</li>
-                            <li>✅ layers of nested: 1/1</li>
-                            <li>⬜ custom backdrop</li>
-                            <li>⬜ custom close button</li>
-                        </ol>
-                        <h4 class="h5">dummy input fields</h4>
-                        <div class="inputs">
-                            <input type="text" placeholder="1" />
-                            <input type="text" placeholder="2" />
-                            <input type="text" placeholder="3" />
-                            <input type="text" placeholder="4" />
-                            <input type="text" placeholder="5" />
-                            <input type="text" placeholder="6" />
-                            <input type="text" placeholder="7" />
-                            <input type="text" placeholder="8" />
+                <Modal>
+                    <button slot="button">standard</button>
+                    <div slot="modal">
+                        <div class="container">
+                            <h4>Things about this modal</h4>
+                            <ol>
+                                <li>✅ active modal</li>
+                                <li>✅ layers of nested: 1/1</li>
+                                <li>⬜ custom backdrop</li>
+                                <li>⬜ custom close button</li>
+                            </ol>
+                            <h4 class="h5">dummy input fields</h4>
+                            <div class="inputs">
+                                <input type="text" placeholder="1" />
+                                <input type="text" placeholder="2" />
+                                <input type="text" placeholder="3" />
+                                <input type="text" placeholder="4" />
+                                <input type="text" placeholder="5" />
+                                <input type="text" placeholder="6" />
+                                <input type="text" placeholder="7" />
+                                <input type="text" placeholder="8" />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <button class="modal-open">terms</button>
-                <div role="dialog">hello</div>
+                </Modal>
+                <Modal>
+                    <button slot="button">terms</button>
+                    <div slot="modal">hello</div>
+                </Modal>
             </svelte:fragment>
         </Card>
         <Card>
@@ -112,40 +83,47 @@
                 </p>
             </svelte:fragment>
             <svelte:fragment slot="samples">
-                <button class="modal-open">standard</button>
-                <div role="dialog">
-                    <div class="container">
-                        <h4>Things about this modal</h4>
-                        <ol>
-                            <li>✅ active modal</li>
-                            <li>✅ layers of nested: 1/1</li>
-                            <li>✅ custom backdrop</li>
-                            <li>⬜ custom close button</li>
-                        </ol>
-                        <h4 class="h5">dummy input fields</h4>
-                        <div class="inputs">
-                            <input type="text" placeholder="1" />
-                            <input type="text" placeholder="2" />
-                            <input type="text" placeholder="3" />
-                            <input type="text" placeholder="4" />
-                            <input type="text" placeholder="5" />
-                            <input type="text" placeholder="6" />
-                            <input type="text" placeholder="7" />
-                            <input type="text" placeholder="8" />
+                <Modal>
+                    <button slot="button">standard</button>
+                    <div slot="modal">
+                        <div class="container">
+                            <h4>Things about this modal</h4>
+                            <ol>
+                                <li>✅ active modal</li>
+                                <li>✅ layers of nested: 1/1</li>
+                                <li>✅ custom backdrop</li>
+                                <li>⬜ custom close button</li>
+                            </ol>
+                            <h4 class="h5">dummy input fields</h4>
+                            <div class="inputs">
+                                <input type="text" placeholder="1" />
+                                <input type="text" placeholder="2" />
+                                <input type="text" placeholder="3" />
+                                <input type="text" placeholder="4" />
+                                <input type="text" placeholder="5" />
+                                <input type="text" placeholder="6" />
+                                <input type="text" placeholder="7" />
+                                <input type="text" placeholder="8" />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div id="custom-bg1" class="modal-backdrop" />
-                <button class="modal-open"
-                    ><span class="material-icons">notifications</span></button
-                >
-                <div role="dialog">hello</div>
-                <div class="modal-backdrop" />
-                <button class="modal-open"
-                    ><span class="material-icons">settings</span></button
-                >
-                <div role="dialog">hello</div>
-                <div class="modal-backdrop" />
+                    <div id="custom-bg1" class="modal-backdrop" />
+                </Modal>
+                <Modal>
+                    <button slot="button"
+                        ><span class="material-icons">notifications</span
+                        ></button
+                    >
+                    <div slot="modal">hello</div>
+                    <div class="modal-backdrop" />
+                </Modal>
+                <Modal>
+                    <button slot="button"
+                        ><span class="material-icons">settings</span></button
+                    >
+                    <div slot="modal">hello</div>
+                    <div class="modal-backdrop" />
+                </Modal>
             </svelte:fragment>
         </Card>
         <Card>
@@ -166,33 +144,38 @@
                 </p>
             </svelte:fragment>
             <svelte:fragment slot="samples">
-                <button class="modal-open">standard</button>
-                <div role="dialog">
-                    <button id="custom-close1" class="modal-close">x</button>
-                    <div class="container">
-                        <h4>Things about this modal</h4>
-                        <ol>
-                            <li>✅ active modal</li>
-                            <li>✅ layers of nested: 1/1</li>
-                            <li>⬜ custom backdrop</li>
-                            <li>✅ custom close button</li>
-                        </ol>
-                        <h4 class="h5">dummy input fields</h4>
-                        <div class="inputs">
-                            <input type="text" placeholder="1" />
-                            <input type="text" placeholder="2" />
-                            <input type="text" placeholder="3" />
-                            <input type="text" placeholder="4" />
-                            <input type="text" placeholder="5" />
-                            <input type="text" placeholder="6" />
-                            <input type="text" placeholder="7" />
-                            <input type="text" placeholder="8" />
+                <Modal>
+                    <button slot="button">standard</button>
+                    <div slot="modal">
+                        <button id="custom-close1" class="modal-close">x</button
+                        >
+                        <div class="container">
+                            <h4>Things about this modal</h4>
+                            <ol>
+                                <li>✅ active modal</li>
+                                <li>✅ layers of nested: 1/1</li>
+                                <li>⬜ custom backdrop</li>
+                                <li>✅ custom close button</li>
+                            </ol>
+                            <h4 class="h5">dummy input fields</h4>
+                            <div class="inputs">
+                                <input type="text" placeholder="1" />
+                                <input type="text" placeholder="2" />
+                                <input type="text" placeholder="3" />
+                                <input type="text" placeholder="4" />
+                                <input type="text" placeholder="5" />
+                                <input type="text" placeholder="6" />
+                                <input type="text" placeholder="7" />
+                                <input type="text" placeholder="8" />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-backdrop" />
-                <button class="modal-open">free trial</button>
-                <div role="dialog">hello</div>
+                    <div class="modal-backdrop" />
+                </Modal>
+                <Modal>
+                    <button slot="button">free trial</button>
+                    <div slot="modal">hello</div>
+                </Modal>
             </svelte:fragment>
         </Card>
         <Card>
@@ -213,57 +196,36 @@
                 </p>
             </svelte:fragment>
             <svelte:fragment slot="samples">
-                <button class="modal-open">standard</button>
-                <div role="dialog">
-                    <div class="container">
-                        <h4>🥚 Things about this modal</h4>
-                        <ol>
-                            <li>✅ active modal</li>
-                            <li>✅ layers of nested: 1/3</li>
-                            <li>⬜ custom backdrop</li>
-                            <li>⬜ custom close button</li>
-                        </ol>
-                        <h4 class="h5">dummy input fields</h4>
-                        <div class="inputs">
-                            <input type="text" placeholder="1" />
-                            <input type="text" placeholder="2" />
-                            <input type="text" placeholder="3" />
-                            <input type="text" placeholder="4" />
-                            <input type="text" placeholder="5" />
-                            <input type="text" placeholder="6" />
-                            <input type="text" placeholder="7" />
-                            <input type="text" placeholder="8" />
-                        </div>
-                        <button class="modal-open">nested in modal</button>
-                        <div role="dialog">
-                            <div class="container">
-                                <h4>🐤 Things about this modal</h4>
-                                <ol>
-                                    <li>✅ active modal</li>
-                                    <li>✅ layers of nested: 2/3</li>
-                                    <li>⬜ custom backdrop</li>
-                                    <li>⬜ custom close button</li>
-                                </ol>
-                                <h4 class="h5">dummy input fields</h4>
-                                <div class="inputs">
-                                    <input type="text" placeholder="1" />
-                                    <input type="text" placeholder="2" />
-                                    <input type="text" placeholder="3" />
-                                    <input type="text" placeholder="4" />
-                                    <input type="text" placeholder="5" />
-                                    <input type="text" placeholder="6" />
-                                    <input type="text" placeholder="7" />
-                                    <input type="text" placeholder="8" />
-                                </div>
-                                <button class="modal-open"
-                                    >nested in nested</button
-                                >
-                                <div role="dialog">
+                <Modal>
+                    <button slot="button">standard</button>
+                    <div slot="modal">
+                        <div class="container">
+                            <h4>🥚 Things about this modal</h4>
+                            <ol>
+                                <li>✅ active modal</li>
+                                <li>✅ layers of nested: 1/3</li>
+                                <li>⬜ custom backdrop</li>
+                                <li>⬜ custom close button</li>
+                            </ol>
+                            <h4 class="h5">dummy input fields</h4>
+                            <div class="inputs">
+                                <input type="text" placeholder="1" />
+                                <input type="text" placeholder="2" />
+                                <input type="text" placeholder="3" />
+                                <input type="text" placeholder="4" />
+                                <input type="text" placeholder="5" />
+                                <input type="text" placeholder="6" />
+                                <input type="text" placeholder="7" />
+                                <input type="text" placeholder="8" />
+                            </div>
+                            <Modal>
+                                <button slot="button">nested in modal</button>
+                                <div slot="modal">
                                     <div class="container">
-                                        <h4>🍗🍳Things about this modal</h4>
+                                        <h4>🐤 Things about this modal</h4>
                                         <ol>
                                             <li>✅ active modal</li>
-                                            <li>✅ layers of nested: 3/3</li>
+                                            <li>✅ layers of nested: 2/3</li>
                                             <li>⬜ custom backdrop</li>
                                             <li>⬜ custom close button</li>
                                         </ol>
@@ -302,12 +264,76 @@
                                                 placeholder="8"
                                             />
                                         </div>
+                                        <Modal>
+                                            <button slot="button"
+                                                >nested in nested</button
+                                            >
+                                            <div slot="modal">
+                                                <div class="container">
+                                                    <h4>
+                                                        🍗🍳Things about this
+                                                        modal
+                                                    </h4>
+                                                    <ol>
+                                                        <li>✅ active modal</li>
+                                                        <li>
+                                                            ✅ layers of nested:
+                                                            3/3
+                                                        </li>
+                                                        <li>
+                                                            ⬜ custom backdrop
+                                                        </li>
+                                                        <li>
+                                                            ⬜ custom close
+                                                            button
+                                                        </li>
+                                                    </ol>
+                                                    <h4 class="h5">
+                                                        dummy input fields
+                                                    </h4>
+                                                    <div class="inputs">
+                                                        <input
+                                                            type="text"
+                                                            placeholder="1"
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            placeholder="2"
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            placeholder="3"
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            placeholder="4"
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            placeholder="5"
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            placeholder="6"
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            placeholder="7"
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            placeholder="8"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Modal>
                                     </div>
                                 </div>
-                            </div>
+                            </Modal>
                         </div>
                     </div>
-                </div>
+                </Modal>
             </svelte:fragment>
         </Card>
         <Card>
@@ -333,5 +359,5 @@
                 page.
             </p>
         </svelte:fragment>
-    </Note> -->
+    </Note>
 </section>

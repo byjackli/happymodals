@@ -5,6 +5,8 @@
 </script>
 
 <script lang="ts">
+    import { init } from "$lib/store/ModalStore";
+    import LiteModeStore from "../store/LiteModeStore";
     import { default as NavMain } from "../components/Nav.svelte";
     // import { default as NavDocs } from "../components/Docs/Nav.svelte";
 
@@ -12,6 +14,7 @@
 
     $: path = home;
     $: hash = doc;
+    $: update = $LiteModeStore ? undefined : init();
 </script>
 
 <NavMain />
