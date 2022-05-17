@@ -287,6 +287,19 @@
             >
             <svelte:fragment slot="desc">
                 <p>Demo coming soon.</p>
+                <p>
+                    Since modal backdrops can be customized, they can also be
+                    made transparent by setting width and height to 0px.
+                </p>
+                <p>
+                    If all nested modals have transparent backdrops, clicking
+                    outside the modal will close all nested modals.
+                </p>
+                <p>
+                    If some nested modals have transparent backdrops, clicking
+                    on a backdrop will close the associated modal and all
+                    succeeding nested modals with transparent backdrops.
+                </p>
             </svelte:fragment>
             <svelte:fragment slot="samples" />
         </Card>

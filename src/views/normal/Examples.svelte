@@ -181,7 +181,14 @@
         <Card>
             <svelte:fragment slot="title">Lock Scrolling</svelte:fragment>
             <svelte:fragment slot="desc">
-                <p>Demo coming soon.</p>
+                <p>
+                    By default, the entire document locks when a modal is
+                    active.
+                </p>
+                <p>
+                    Implementation coming soon. Currently, the entire background
+                    is automatically locked.
+                </p>
             </svelte:fragment>
             <svelte:fragment slot="samples" />
         </Card>
@@ -342,8 +349,73 @@
             >
             <svelte:fragment slot="desc">
                 <p>Demo coming soon.</p>
+                <p>
+                    Since modal backdrops can be customized, they can also be
+                    made transparent by setting width and height to 0px.
+                </p>
+                <p>
+                    If all nested modals have transparent backdrops, clicking
+                    outside the modal will close all nested modals.
+                </p>
+                <p>
+                    If some nested modals have transparent backdrops, clicking
+                    on a backdrop will close the associated modal and all succeeding nested
+                    modals with transparent backdrops.
+                </p>
             </svelte:fragment>
             <svelte:fragment slot="samples" />
+        </Card>
+        <Card>
+            <svelte:fragment slot="title"
+                >{`Static Mode (dynamic={false})`}</svelte:fragment
+            >
+            <svelte:fragment slot="desc">
+                <p>
+                    By default, Modal component is dynamic. The following
+                    examples demonstrate static mode.
+                </p>
+                <p>
+                    From the user's perspective, there is no difference between
+                    static and dynamic mode, other than potential performance
+                    differences.
+                </p>
+                <p>
+                    Static mode preserves DOM nodes and the associated input
+                    data, whereas in dynamic mode, this needs to be done
+                    manually.
+                </p>
+                <p>
+                    It is recommended to use static mode if the nested features
+                    are commonly accessed.
+                </p>
+            </svelte:fragment>
+            <svelte:fragment slot="samples">
+                <Modal dynamic={false}>
+                    <button slot="button">standard</button>
+                    <div slot="modal">
+                        <div class="container">
+                            <h4>Things about this modal</h4>
+                            <ol>
+                                <li>✅ active modal</li>
+                                <li>✅ layers of nested: 1/1</li>
+                                <li>⬜ custom backdrop</li>
+                                <li>⬜ custom close button</li>
+                            </ol>
+                            <h4 class="h5">dummy input fields</h4>
+                            <div class="inputs">
+                                <input type="text" placeholder="1" />
+                                <input type="text" placeholder="2" />
+                                <input type="text" placeholder="3" />
+                                <input type="text" placeholder="4" />
+                                <input type="text" placeholder="5" />
+                                <input type="text" placeholder="6" />
+                                <input type="text" placeholder="7" />
+                                <input type="text" placeholder="8" />
+                            </div>
+                        </div>
+                    </div>
+                </Modal></svelte:fragment
+            >
         </Card>
     </div>
     <Note>

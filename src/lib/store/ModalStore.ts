@@ -82,6 +82,10 @@ function createCSSManager(): HTMLElement {
             position: fixed;
             top: 0; left: 0; 
         }
+        .modal-container.false .modal, 
+        .modal-container.false .modal-backdrop {
+            position: absolute;
+        }
         .modal-backdrop {
             width: 100vw; 
             height: 100vh; 
