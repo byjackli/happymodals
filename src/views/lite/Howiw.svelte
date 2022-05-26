@@ -4,7 +4,10 @@
             {
                 step: "-",
                 caption: `Simple explanation of how the code works (with visualizations).`,
-                list: [`just scroll or click "next"`],
+                list: [
+                    `click "next" to continue`,
+                    `and "back arrow" to revisit the previous step`,
+                ],
             },
             {
                 step: "1a",

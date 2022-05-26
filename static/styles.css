@@ -312,6 +312,7 @@ section.intro h1 span {
     gap: 3em;
 }
 .howiw .summary * { color: var(--white); }
+.howiw .summary .action-container * { color: var(--text); }
 .howiw .controls * { color: var(--text); }
 .howiw .summary {
     width: 34.5ch;
@@ -513,3 +514,8 @@ div[role="dialog"] .container {
 /* HIGHER ORDER */
 .forTab { opacity: 0; }
 .forTab:focus { opacity: 1; }
+.action-container {
+    display: flex;
+    flex-direction: row;
+    gap: .5em;
+}

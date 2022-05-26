@@ -1,78 +1,125 @@
 <script lang="ts">
     import Note from "../../components/Note.svelte";
     export let isolated = true;
-    const summary = [
-            {
-                step: "-",
-                caption: `Simple explanation of how the code works (with visualizations).`,
-                list: [`just scroll or click "next"`],
-            },
-            {
-                step: "1a",
-                caption: `creating the Modal Manager`,
-                list: [
-                    `the modal manager contains all active modals and their backdrops`,
-                    `create and add the "modal-manager" to the DOM`,
-                    `add click event listeners to the html element`,
-                ],
-            },
-            {
-                step: "1b",
-                caption: `hiding inactive modal elements`,
-                list: [
-                    `find all elements with role="dialog" and class="modal-backdrop" and hide them from the user`,
-                    `add aria-hidden="true" and class="modal-inactive" to each of those elements`,
-                ],
-            },
-            {
-                step: "2",
-                caption: `clicking on a button that opens a modal`,
-                list: [
-                    `the button that was clicked is added to the trackButton stack`,
-                    `the associated modal and it's backdrop is moved to the Modal Manager`,
-                    `the modal is made visible`,
-                    `everything with the class "modal-scroll-lock" is locked`,
-                ],
-            },
-            {
-                step: "3",
-                caption: `check for close modal button`,
-                list: [
-                    `the first element of the modal should be a close modal button`,
-                    `if it's not there, the Modal Manager will automatically create one`,
-                ],
-            },
-            {
-                step: "4",
-                caption: `check for modal backdrop`,
-                list: [
-                    `the modal's next element sibling should be a backdrop`,
-                    `if the modal does not have a backdrop, the Modal Manager will automatically create one`,
-                ],
-            },
-            {
-                step: "5",
-                caption: `clicking on a close modal button or anywhere outside the modal`,
-                list: [
-                    `the modal as well as the backdrop are both hidden from the user`,
-                    `class="modal-inactive" and aria-hidden="true" are added`,
-                ],
-            },
-            {
-                step: "6",
-                caption: `the modal and its respective elements are moved back to its original position`,
-                list: [
-                    `everything including auto-generated are moved back`,
-                    `the element in focus before the modal was opened is resumed`,
-                    `everything with the class "modal-scroll-lock" is unlocked`,
-                ],
-            },
-        ],
-        lit = 1.0,
+    const lit = 1.0,
         dim = 0.4;
 
     let step,
-        cursor = 0;
+        cursor = 0,
+        type = "dynamic";
+
+    $: summary =
+        type === "dynamic"
+            ? [
+                  {
+                      step: "-",
+                      caption: `Choose between two different modal types, dynamic nad static.`,
+                      list: [
+                          `in a dynamic modal, the modal is removed from the DOM when inactive, whereas the modal in a static modal will always be active.`,
+                      ],
+                  },
+                  {
+                      step: "1",
+                      caption: `initiate Happy Modals`,
+                      list: [
+                          `div container named “modal-manager” is created and placed on the DOM`,
+                          `the "modal-manager" contains all active modals add click event listener that manages clicking outside the modal`,
+                          `add click event listeners to the html element`,
+                      ],
+                  },
+                  {
+                      step: "2a",
+                      caption: `before opening a modal`,
+                      list: [
+                          `if modal has a “beforeOpen” lifecycle hook, run immediately`,
+                          `add the modal to the "modal container"`,
+                          `add the "modal container" to the trackContainer stack`,
+                      ],
+                  },
+                  {
+                      step: "2b",
+                      caption: `while opening modal`,
+                      list: [
+                          `the modal and its backdrop is moved to the modal manager`,
+                          `everything with the class “modal-scroll-lock” is locked`,
+                          `if modal has “afterOpen” lifecycle hook, run immediately`,
+                      ],
+                  },
+                  {
+                      step: "3a",
+                      caption: `clicking on a close modal button or anywhere outside the modal
+`,
+                      list: [
+                          `if modal has “beforeClose” lifecycle hook, run immediately`,
+                          `the modal and its respective elements are moved back to its original position`,
+                          `the modal is removed from the DOM`,
+                      ],
+                  },
+                  {
+                      step: "3b",
+                      caption: `after modal is closed`,
+                      list: [
+                          `the element in focus before the modal was opened is resumed`,
+                          `everything with the class "modal-scroll-lock" is unlocked`,
+                          `if modal has "afterClose" lifecycle hook, run last`,
+                      ],
+                  },
+              ]
+            : [
+                  {
+                      step: "-",
+                      caption: `Choose between two different modal types, dynamic nad static.`,
+                      list: [
+                          `in a dynamic modal, the modal is removed from the DOM when inactive, whereas the modal in a static modal will always be active.`,
+                      ],
+                  },
+                  {
+                      step: "1",
+                      caption: `initiate Happy Modals`,
+                      list: [
+                          `div container named “modal-manager” is created and placed on the DOM`,
+                          `the "modal-manager" contains all active modals add click event listener that manages clicking outside the modal`,
+                          `add click event listeners to the html element`,
+                      ],
+                  },
+                  {
+                      step: "2a",
+                      caption: `before opening a modal`,
+                      list: [
+                          `if modal has a “beforeOpen” lifecycle hook, run immediately`,
+                          `add the modal to the "modal container"`,
+                          `add the "modal container" to the trackContainer stack`,
+                      ],
+                  },
+                  {
+                      step: "2b",
+                      caption: `while opening modal`,
+                      list: [
+                          `the modal and its backdrop is moved to the modal manager`,
+                          `everything with the class “modal-scroll-lock” is locked`,
+                          `if modal has “afterOpen” lifecycle hook, run immediately`,
+                      ],
+                  },
+                  {
+                      step: "3a",
+                      caption: `clicking on a close modal button or anywhere outside the modal
+`,
+                      list: [
+                          `if modal has “beforeClose” lifecycle hook, run immediately`,
+                          `modal and backdrop are hidden from the user`,
+                          `aria-hidden="true" are added to the modal and backdrop`,
+                      ],
+                  },
+                  {
+                      step: "3b",
+                      caption: `the modal and its respective elements are moved back to its original position`,
+                      list: [
+                          `everything including auto-generated are moved back`,
+                          `the element in focus before the modal was opened is resumed`,
+                          `everything with the class "modal-scroll-lock" is unlocked`,
+                      ],
+                  },
+              ];
     $: opacity = {
         html: [0, 3, 4, 5, 6, 7].includes(cursor) ? lit : dim,
         body: [0].includes(cursor) ? lit : dim,
@@ -109,6 +156,10 @@
         else if (direction === "prev" && 0 < cursor) cursor--;
         if (reset) step.focus();
     }
+
+    function changeType() {
+        type = type === "dynamic" ? "static" : "dynamic";
+    }
 </script>
 
 <section class="howiw">
@@ -121,11 +172,11 @@
                     <h2 class="h4">how it works</h2>
                 {/if}
 
-                <Note>
+                <!-- <Note>
                     <span class="material-icons" slot="icon">info</span>
                     <p>coming soon</p>
-                </Note>
-                <!-- <div class="controls">
+                </Note> -->
+                <div class="controls">
                     <button
                         disabled={!cursor}
                         aria-disabled={!cursor}
@@ -141,9 +192,10 @@
                         <span>next</span>
                         <span class="material-icons">trending_flat</span>
                     </button>
-                </div> -->
+                    <button on:click={changeType}>{type}</button>
+                </div>
             </div>
-            <!-- <div>
+            <div>
                 <span bind:this={step} class="h4"
                     >step {summary[cursor].step}</span
                 >
@@ -153,9 +205,9 @@
                 {#each summary[cursor].list as point (point)}
                     <li>{point}</li>
                 {/each}
-            </ul> -->
+            </ul>
         </div>
-        <!-- <div class="diagram">
+        <div class="diagram">
             <div
                 class="html scroll-{2 < cursor && cursor < 7}"
                 style="background-color: rgba(191, 255, 213,{opacity[
@@ -281,14 +333,15 @@
                     </div>
                 </div>
             </div>
-        </div> -->
+        </div>
     </div>
-    <!-- <div>
+    <div>
         <button class="forTab" on:click={(event) => nav(event, "prev", true)}
             >previous</button
         >
         <button class="forTab" on:click={(event) => nav(event, "next", true)}
             >next step</button
         >
-    </div> -->
+        <button class="forTab" on:click={changeType}>{type}</button>
+    </div>
 </section>
