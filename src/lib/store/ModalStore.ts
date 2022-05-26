@@ -70,7 +70,6 @@ function trapFocus(event: KeyboardEvent): void {
 // create CSS classes
 function createCSSManager(): HTMLElement {
     const styles = document.createTextNode(`
-        .modal-inactive { display: none !important; }
         .modal-scroll-locked { overflow: hidden !important; }
         .modal-container {
             position: absolute;

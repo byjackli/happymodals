@@ -462,8 +462,6 @@ section.intro h1 span {
 
 /* DIALOG */
 div[role="dialog"] {
-    width: 50vw;
-    height: 50vh;
     background-color: var(--white);
     border-radius: 4px;
 }
