@@ -70,7 +70,6 @@ function trapFocus(event: KeyboardEvent): void {
 // create CSS classes
 function createCSSManager(): HTMLElement {
     const styles = document.createTextNode(`
-        .modal-inactive { display: none !important; }
         .modal-scroll-locked { overflow: hidden !important; }
         .modal-container {
             position: absolute;
@@ -81,6 +80,10 @@ function createCSSManager(): HTMLElement {
         .modal, .modal-backdrop {
             position: fixed;
             top: 0; left: 0; 
+        }
+        .modal-container.false .modal, 
+        .modal-container.false .modal-backdrop {
+            position: absolute;
         }
         .modal-backdrop {
             width: 100vw; 

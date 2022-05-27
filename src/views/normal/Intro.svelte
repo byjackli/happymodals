@@ -1,5 +1,4 @@
 <script lang="ts">
-    import Note from "../../components/Note.svelte";
     export let isolated = true;
 </script>
 
@@ -11,10 +10,6 @@
             <h1 class="h4">happy modals</h1>
         {/if}
         <p>stress-free developer experience + additional features</p>
-        <Note>
-            <span class="material-icons" slot="icon">info</span>
-            <p>coming soon</p>
-        </Note>
     </div>
     <ul>
         <li>dynamic import/render</li>
