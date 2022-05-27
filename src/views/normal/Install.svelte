@@ -1,5 +1,5 @@
 <script lang="ts">
-    // import Code from "@byjackli/highlighter";
+    import Code from "@byjackli/highlighter";
     import Note from "../../components/Note.svelte";
     export let isolated = true;
 </script>
@@ -11,17 +11,8 @@
         <h2 class="h3">Installation</h2>
     {/if}
 
-    <Note>
-        <span class="material-icons" slot="icon">info</span>
-        <p>coming soon</p>
-    </Note>
-    <!-- <p>
-        Don't worry, no matter what method you choose, installing and setting up
-        your project is also stress-free.
-    </p>
     <div class="collection">
         <div>
-            <h3 class="h4">Option 1.</h3>
             <div>
                 <p>1. Install Happy Modals</p>
                 <Code>
@@ -33,66 +24,21 @@
                 </Code>
             </div>
             <div>
-                <p>2. Initialize Modals in your App</p>
+                <p>
+                    2. Initialize Modals in your App (preferably in
+                    __layout.svelte)
+                </p>
                 <Code
                     lang="svelte"
                     code={`\<script lang\=\"ts\"\>
-            import { initModalLite as ModalLite } from \"happymodals\"\;
-            import { onMount } from \"svelte\"\;
-    
-            onMount(() \=\> initModals())\;
-        \<\/script\>
+        import { init } from \"happymodals\"\;
+
+        init();
+    \<\/script\>
             ...
         `}
                 />
             </div>
         </div>
-        <div>
-            <h3 class="h4">Option 2a. (self host)</h3>
-            <div>
-                <p>
-                    1. Download single <a
-                        href="https://raw.githubusercontent.com//byjackli/happymodals/tree/main/src/lib/components/ModalLite.js"
-                        rel="noreferrer"
-                        download>source file</a
-                    >
-                </p>
-            </div>
-            <div>
-                <p>2. Add file to headers.</p>
-                <Code
-                    lang="html"
-                    code={`
-            <html>
-                <head>
-                    <script type="text/javascript" src="location_of_file"/>
-                </head>
-                <body>
-                    ...
-                </body>
-            </html>
-        `}
-                />
-            </div>
-        </div>
-        <div>
-            <h3 class="h4">Option 2b. (CDN)</h3>
-            <div>
-                <p>1. Add file to headers.</p>
-                <Code
-                    lang="html"
-                    code={`
-            <html>
-                <head>
-                    <script type="text/javascript" src="https://raw.githubusercontent.com//byjackli/happymodals/tree/main/src/lib/components/ModalLite.js" />
-                </head>
-                <body>
-                    ...
-                </body>
-            </html>
-        `}
-                />
-            </div>
-        </div>
-    </div> -->
+    </div>
 </section>

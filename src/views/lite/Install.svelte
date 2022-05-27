@@ -31,11 +31,11 @@
                 <Code
                     lang="svelte"
                     code={`\<script lang\=\"ts\"\>
-            import { initModalLite as ModalLite } from \"happymodals\"\;
-            import { onMount } from \"svelte\"\;
-    
-            onMount(() \=\> initModals())\;
-        \<\/script\>
+        import { initModalLite as ModalLite } from \"happymodals\"\;
+        import { onMount } from \"svelte\"\;
+
+        onMount(() \=\> initModals())\;
+    \<\/script\>
             ...
         `}
                 />
