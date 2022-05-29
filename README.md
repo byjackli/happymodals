@@ -50,6 +50,7 @@ Open to proposals with crazy changes, expect lengthy discussions. This is a rela
 Just use the following keywords for their respective changes:
 * `[DOCS]`
 * `[PATCH]`
+* `[UPDATE]`
 * `[BREAKING]`
 
 Note that official npm releases abide by [semantic versioning](https://semver.org/), see [changelog](./CHANGELOG.md) for the complete record.

@@ -6,24 +6,31 @@
         closeModal,
     } from "../store/ModalStore";
 
-    export let dynamic: boolean = true,                 // when modal not open, it is removed from the DOM so the DOM is not polluted with unused nodes
-        preventBackdrop = false,                        // clicking on backdrop will not close the modal
-        beforeOpen: Function | undefined = undefined,   // lifecycle hook: call function before opening modal    
-        afterOpen: Function | undefined = undefined,    // lifecycle hook: call function after opening modal
-        beforeClose: Function | undefined = undefined,  // lifecycle hook: call function before closing modal
-        afterClose: Function | undefined = undefined;   // lifecycle hook: call function after closing modal
+    export let raw: boolean = false, // when true, modal will not auto-create missing components
+        toggle: boolean = false, // when true, the open modal button will act as a toggle
+        fixed: { x: string; y: string } = undefined, // coordinates for precise positioning of element on DOM
+        dynamic: boolean = true, // when  true, inactive modal will be removed from the DOM
+        preventBackdrop: boolean = false, // clicking on backdrop will not close the modal
+        beforeOpen: Function | undefined = undefined, // lifecycle hook: call function before opening modal
+        afterOpen: Function | undefined = undefined, // lifecycle hook: call function after opening modal
+        beforeClose: Function | undefined = undefined, // lifecycle hook: call function before closing modal
+        afterClose: Function | undefined = undefined; // lifecycle hook: call function after closing modal
 
-    let origin: HTMLElement,
-        container: HTMLElement,
+    let container: HTMLElement,
         isLoading: boolean = false,
         isOpen: boolean = false;
 
-    $: slots = $$props.$$slots;
     $: manager = $ModalStore.manager;
+    $: style = fixed ? `top:${fixed.x}; left:${fixed.y};` : null;
 
     function open() {
         beforeOpen && beforeOpen();
         isLoading = true;
+    }
+
+    function flex() {
+        if (toggle && isOpen) close();
+        else open();
     }
 
     export function close() {
@@ -45,27 +52,16 @@
             isOpen = !isOpen;
         }
     });
-
-    // check for toggle
-
-    /* ONMOUNT
-    1. add to ModalStore
-    2. what use case will the developer be using an insane number of modals that we need to address event delegation?
-    */
 </script>
 
-<div class="modal-origin" bind:this={origin}>
-    {#if slots?.toggle}
-        <div class="modal-toggle">
-            <slot name="toggle" />
-        </div>
-    {:else}
-        <div class="modal-open" on:click={open}>
-            <slot name="button">
+<div class="modal-origin">
+    <div class="modal-open" on:click={flex}>
+        <slot name="button">
+            {#if !raw}
                 <button>open modal</button>
-            </slot>
-        </div>
-    {/if}
+            {/if}
+        </slot>
+    </div>
 
     {#if !dynamic || isLoading || isOpen}
         <div
@@ -73,14 +69,18 @@
             aria-hidden={!isOpen}
             bind:this={container}
         >
-            <div class="modal" role="dialog">
+            <div class="modal" role="dialog" {style}>
                 <slot name="close">
-                    <button class="modal-close">Close Modal</button>
+                    {#if !raw}
+                        <button class="modal-close">Close Modal</button>
+                    {/if}
                 </slot>
                 <slot name="modal" />
             </div>
             <slot name="backdrop">
-                <div class="modal-backdrop" aria-hidden="true" />
+                {#if !raw}
+                    <div class="modal-backdrop" aria-hidden="true" />
+                {/if}
             </slot>
         </div>
     {/if}
