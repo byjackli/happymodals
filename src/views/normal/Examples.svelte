@@ -107,7 +107,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="custom-bg1" class="modal-backdrop" />
+                    <div id="custom-bg1" slot="backdrop" />
                 </Modal>
                 <Modal>
                     <button slot="button"
@@ -115,14 +115,12 @@
                         ></button
                     >
                     <div slot="modal">hello</div>
-                    <div class="modal-backdrop" />
                 </Modal>
                 <Modal>
                     <button slot="button"
                         ><span class="material-icons">settings</span></button
                     >
                     <div slot="modal">hello</div>
-                    <div class="modal-backdrop" />
                 </Modal>
             </svelte:fragment>
         </Card>
@@ -170,7 +168,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-backdrop" />
                 </Modal>
                 <Modal>
                     <button slot="button">free trial</button>
@@ -359,8 +356,8 @@
                 </p>
                 <p>
                     If some nested modals have transparent backdrops, clicking
-                    on a backdrop will close the associated modal and all succeeding nested
-                    modals with transparent backdrops.
+                    on a backdrop will close the associated modal and all
+                    succeeding nested modals with transparent backdrops.
                 </p>
             </svelte:fragment>
             <svelte:fragment slot="samples" />
