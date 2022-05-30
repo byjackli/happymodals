@@ -16,21 +16,22 @@
         beforeClose: Function | undefined = undefined, // lifecycle hook: call function before closing modal
         afterClose: Function | undefined = undefined; // lifecycle hook: call function after closing modal
 
-    let container: HTMLElement,
+    let origin: HTMLElement,
+        container: HTMLElement,
         isLoading: boolean = false,
         isOpen: boolean = false;
 
     $: manager = $ModalStore.manager;
     $: style = fixed ? `top:${fixed.x}; left:${fixed.y};` : null;
 
+    function flex() {
+        if (toggle && $ModalStore.trackOrigin.includes(origin)) close();
+        else open();
+    }
+
     function open() {
         beforeOpen && beforeOpen();
         isLoading = true;
-    }
-
-    function flex() {
-        if (toggle && isOpen) close();
-        else open();
     }
 
     export function close() {
@@ -45,7 +46,7 @@
     afterUpdate(() => {
         if (isLoading) {
             if (!isOpen) {
-                openModal(container, preventBackdrop, close);
+                openModal(origin, container, preventBackdrop, close);
                 afterOpen && afterOpen();
             }
             isLoading = false;
@@ -54,7 +55,7 @@
     });
 </script>
 
-<div class="modal-origin">
+<div class="modal-origin" bind:this={origin}>
     <div class="modal-open" on:click={flex}>
         <slot name="button">
             {#if !raw}
@@ -71,16 +72,17 @@
         >
             <div class="modal" role="dialog" {style}>
                 <slot name="close">
-                    {#if !raw}
-                        <button class="modal-close">Close Modal</button>
-                    {/if}
+                    <button class="modal-close {raw ? 'transparent' : null}"
+                        >close</button
+                    >
                 </slot>
                 <slot name="modal" />
             </div>
             <slot name="backdrop">
-                {#if !raw}
-                    <div class="modal-backdrop" aria-hidden="true" />
-                {/if}
+                <div
+                    class="modal-backdrop {raw ? 'transparent' : null}"
+                    aria-hidden="true"
+                />
             </slot>
         </div>
     {/if}
