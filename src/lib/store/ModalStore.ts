@@ -3,7 +3,8 @@ import type Local from "$lib/types/Modal";
 
 const local: Local = {
     body: undefined, manager: undefined, focusable: undefined, trackDepth: 0,
-    trackContainer: [], trackModal: [], trackPreventBackdrop: [], trackClose: [], trackResume: [], trackScrollLock: []
+    trackOrigin: [], trackContainer: [], trackModal: [],
+    trackPreventBackdrop: [], trackClose: [], trackResume: [], trackScrollLock: []
 };
 export const ModalStore = writable({ ...local })
 
@@ -30,22 +31,30 @@ function observeClicks(event: MouseEvent): void {
 
 // handles click events not within modal
 function listenToCloseClicks(event: MouseEvent) {
-    const target = event.target as HTMLElement,
+    const origin = local.trackOrigin[local.trackOrigin.length - 1],
+        open = origin.firstElementChild,
+        target = event.target as HTMLElement;
+
+    if ((target.closest(".modal-open") as HTMLElement) === open)
+        return 0
+
+    const
         clickedModal = target.closest('*[role="dialog"]'),
         clickedBackdrop = target.closest(".modal-backdrop"),
         clickedClose = clickedBackdrop || target.closest('.modal-close')?.closest('*[role="dialog"]').nextElementSibling,
-        preventBackdrop = local.trackPreventBackdrop[local.trackPreventBackdrop.length - 1],
         depthOfModal = Number.parseInt(clickedModal?.getAttribute("id")),
         depthOfBackdrop = Number.parseInt(clickedClose?.previousElementSibling.getAttribute("id"));
 
     function isSelf(clicked: number) { return clicked === local.trackDepth }
-
-    if (clickedBackdrop && preventBackdrop) return
-    if (!clickedClose && !clickedModal) masterkey()
-    else if (!clickedClose && !isSelf(depthOfModal)) masterkey(local.trackDepth - depthOfModal - 1)
-    else if (clickedClose && !isSelf(depthOfBackdrop)) masterkey(local.trackDepth - depthOfBackdrop)
-    else if (isSelf(depthOfBackdrop)) close()
-    local.trackPreventBackdrop.pop()
+    try {
+        if (!clickedClose && !clickedModal) masterkey()
+        else if (!clickedClose && !isSelf(depthOfModal)) masterkey(local.trackDepth - depthOfModal - 1)
+        else if (clickedClose && !isSelf(depthOfBackdrop)) masterkey(local.trackDepth - depthOfBackdrop)
+        else if (isSelf(depthOfBackdrop)) close()
+    }
+    catch (err) {
+        console.error(err)
+    }
 }
 // traps focus within most recent active modal
 function trapFocus(event: KeyboardEvent): void {
@@ -98,6 +107,13 @@ function createCSSManager(): HTMLElement {
             padding: 10px;
             background-color: white;
             color: black;
+        }
+        .transparent {
+            max-width: 0px !important;
+            max-height: 0px !important;
+            overflow: hidden !important;
+            padding: 0px !important;
+            margin: 0px !important;
         }
     `),
         styleNode = document.createElement("style");
@@ -164,7 +180,7 @@ function updateFocusable(modal) {
     // for (const { sibling, modal } of temp) sibling.after(modal);
 }
 
-export function openModal(container: HTMLElement, preventBackdrop: boolean, close: VoidFunction) {
+export function openModal(origin: HTMLElement, container: HTMLElement, preventBackdrop: boolean, close: VoidFunction) {
     const
         depth = local.trackDepth += 1,
         modal = container.firstElementChild as HTMLElement,
@@ -180,6 +196,7 @@ export function openModal(container: HTMLElement, preventBackdrop: boolean, clos
     modal.remove();                                 // remove modal from where its original location
 
     local.trackResume.push(document.activeElement as HTMLElement);       // track previous element in focus before a modal was activated
+    local.trackOrigin.push(origin)
     local.trackContainer.push(container);                         // track each all active modals and most recent modal
     local.trackModal.push(modal);                         // track each all active modals and most recent modal
     local.trackPreventBackdrop.push(preventBackdrop)
@@ -202,6 +219,9 @@ export function closeModal() {
         backdrop = modal.nextElementSibling,
         resume = local.trackResume.pop();
 
+    local.trackOrigin.pop()
+    local.trackPreventBackdrop.pop()
+
     container.appendChild(modal);                            // put modal back where it was found
     container.appendChild(backdrop);                            // put modal back where it was found
 
@@ -215,8 +235,11 @@ export function closeModal() {
     }
 }
 function close() {
-    const close = local.trackClose.pop()
-    if (close !== undefined) close()
+    const localClose = local.trackClose.pop(),
+        preventBackdrop = local.trackPreventBackdrop[local.trackPreventBackdrop.length - 1];
+
+    if (preventBackdrop) throw "closing modal was manually prevented"
+    if (localClose !== undefined) localClose()
     else closeModal()
 }
 // closes all or x number of modals at once
