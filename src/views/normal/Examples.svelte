@@ -116,12 +116,6 @@
                     >
                     <div slot="modal">hello</div>
                 </Modal>
-                <Modal>
-                    <button slot="button"
-                        ><span class="material-icons">settings</span></button
-                    >
-                    <div slot="modal">hello</div>
-                </Modal>
             </svelte:fragment>
         </Card>
         <Card>
@@ -218,7 +212,7 @@
                             </div>
                         </div>
                     </div>
-                    <div slot="backdrop" class="modal-backdrop transparent"></div>
+                    <div slot="backdrop" class="modal-backdrop transparent" />
                 </Modal>
             </svelte:fragment>
         </Card>
@@ -466,9 +460,9 @@
         <LiteModeSwitch slot="icon" />
         <svelte:fragment>
             <p>
-                The regular version of happy modals is full of more features; to
-                name a few, auto-open, prevent close, and lifecycle hooks. Learn
-                more by flipping the switch!
+                This version has a lot of extra features; to name a few,
+                auto-open, prevent close, and lifecycle hooks. Don't need all
+                the bells and whistles? Opt for a smaller and simpler package!
             </p>
             <p>
                 You can flip this switch any time you want at the top of the

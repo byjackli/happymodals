@@ -15,6 +15,6 @@
         <li>dynamic import/render</li>
         <li>open and close hooks</li>
         <li>expose closed function</li>
-        <li>inherit position</li>
+        <li>custom position</li>
     </ul>
 </section>

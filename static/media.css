@@ -1,0 +1,66 @@
+@media only screen and (max-width: 1436px) {
+    :root { --normal: 16px; }
+    .card-container { grid-template-columns: repeat(2, 1fr); }
+    nav#main { padding: 0 3em; }
+}
+
+@media only screen and (max-width: 830px) {
+    div.logo-text span:last-child { display: none; }
+    nav#main div.rhs { height: 100%; }
+    nav#main div.rhs ul {
+        flex-direction: column;
+        overflow-y: scroll;
+        justify-content: flex-start;
+        height: 100%;
+        padding: 2em;
+        gap: 2em;
+    }
+    .card-container { grid-template-columns: repeat(1, 1fr); }
+    .howiw { min-height: fit-content; }
+    .howiw .main {
+        position: initial;
+        top: unset;
+        left: unset;
+        transform: unset;
+        flex-direction: column-reverse;
+        padding-bottom: 5rem;
+     }
+}
+
+@media only screen and (max-width: 650px) {
+    div.logo-text { display: none; }
+}
+
+@media only screen and (max-width: 460px) {
+    section { 
+        padding-left: 1.5em;
+        padding-right: 1.5em;
+     }
+    div.logo-text { display: none; }
+    nav#main div.rhs, nav#main div.rhs ul {
+        flex-direction: column;
+        justify-content: flex-start;
+        height: fit-content;
+        overflow: initial;
+        gap: 1.5em;
+    }
+    nav#main div.rhs {
+        height: 100%;
+        overflow-y: scroll;
+        padding-bottom: 2em;
+    }
+    
+    .howiw .diagram .html {
+        min-width: 18.5em;
+        min-height: 20em;
+        max-width: 18.5em;
+        max-height: 20em;
+        background-color: rgb(191, 255, 213);
+        border: solid var(--text) 1px;
+        overflow-y: scroll;
+    }
+    .howiw .controls { flex-wrap: wrap; }
+
+    .card .samples { flex-wrap: wrap; }
+    .note { flex-direction: column; }
+}
