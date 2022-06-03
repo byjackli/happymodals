@@ -167,6 +167,7 @@ nav#main .lhs, nav#main .rhs, nav#main ul {
     align-items: center;
     gap: 2.78rem;
 }
+nav#main .lhs { padding-right: 1.5em; }
 nav#main ul {
     padding: 0;
     margin: 0;
@@ -361,6 +362,7 @@ section.intro h1 span {
 
 
 .examples, .install {
+    width: 100%;
     height: fit-content;
     min-height: unset;
     padding-bottom: 5em;

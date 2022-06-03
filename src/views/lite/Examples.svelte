@@ -112,11 +112,6 @@
                 >
                 <div role="dialog">hello</div>
                 <div class="modal-backdrop" />
-                <button class="modal-open"
-                    ><span class="material-icons">settings</span></button
-                >
-                <div role="dialog">hello</div>
-                <div class="modal-backdrop" />
             </svelte:fragment>
         </Card>
         <Card>
