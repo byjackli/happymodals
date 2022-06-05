@@ -22,7 +22,6 @@
         isOpen: boolean = false;
 
     $: manager = $ModalStore.manager;
-    $: style = fixed ? `top:${fixed.x}; left:${fixed.y};` : null;
 
     function flex() {
         if (toggle && $ModalStore.trackOrigin.includes(origin)) close();
@@ -46,7 +45,7 @@
     afterUpdate(() => {
         if (isLoading) {
             if (!isOpen) {
-                openModal(origin, container, preventBackdrop, close);
+                openModal(origin, container, { preventBackdrop, fixed }, close);
                 afterOpen && afterOpen();
             }
             isLoading = false;
@@ -70,7 +69,7 @@
             aria-hidden={!isOpen}
             bind:this={container}
         >
-            <div class="modal" role="dialog" {style}>
+            <div class="modal" role="dialog">
                 <slot name="close">
                     <button class="modal-close {raw ? 'transparent' : null}"
                         >close</button

@@ -88,7 +88,6 @@ function createCSSManager(): HTMLElement {
         }
         .modal, .modal-backdrop {
             position: fixed;
-            top: 0; left: 0; 
         }
         .modal-container.false .modal, 
         .modal-container.false .modal-backdrop {
@@ -180,8 +179,8 @@ function updateFocusable(modal) {
     // for (const { sibling, modal } of temp) sibling.after(modal);
 }
 
-export function openModal(origin: HTMLElement, container: HTMLElement, preventBackdrop: boolean, close: VoidFunction) {
-    const
+export function openModal(origin: HTMLElement, container: HTMLElement, options: { preventBackdrop?: boolean, fixed?: { x: string, y: string } }, close: VoidFunction) {
+    const coords = options.fixed ? `top:${options.fixed.x}; left:${options.fixed.y}; ` : "",
         depth = local.trackDepth += 1,
         modal = container.firstElementChild as HTMLElement,
         backdrop = container.lastElementChild as HTMLElement;
@@ -199,11 +198,11 @@ export function openModal(origin: HTMLElement, container: HTMLElement, preventBa
     local.trackOrigin.push(origin)
     local.trackContainer.push(container);                         // track each all active modals and most recent modal
     local.trackModal.push(modal);                         // track each all active modals and most recent modal
-    local.trackPreventBackdrop.push(preventBackdrop)
+    local.trackPreventBackdrop.push(options.preventBackdrop)
     local.trackClose.push(close)
 
     backdrop.setAttribute('style', `z-index: ${depth * 2 - 1};`);
-    modal.setAttribute('style', `z-index: ${depth * 2};`);
+    modal.setAttribute('style', `${coords}z-index: ${depth * 2};`);
     modal.setAttribute('id', `${depth}`);
     local.manager.prepend(backdrop);                 // add backdrop to Modal Manager
     local.manager.prepend(modal);                 // add backdrop to Modal Manager

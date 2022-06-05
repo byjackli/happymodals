@@ -1,11 +1,19 @@
+## 0.1.2 (June 4, 2022)
+This update brings non-breaking bugfixes.
+
+* Fixed a bug where custom coordinates is accidentally overwritten.
+
+
 ## 0.1.1 (May 30, 2022)
 This update brings non-breaking bugfixes.
+
 
 * Fixed a bug where clicking on the toggle button of an open modal does not close the modal
 * Fixed a bug causing raw modals to have unexpected behaviors when attempting to close
 
 ## 0.1.0 (May 28, 2022)
 This update introduces new non-breaking features, exposing greater control over the user interface and user experience.
+
 
 ### New Features
 * `raw`: When set to true, the modal will not auto-create missing components (open modal button, close modal button, and backdrop). By default, this feature is turned off.
