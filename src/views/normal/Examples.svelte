@@ -172,19 +172,14 @@
         <Card>
             <svelte:fragment slot="title">Toggle Button</svelte:fragment>
             <svelte:fragment slot="desc">
-                <p>Demo coming soon.</p>
                 <p>
-                    Since modal backdrops can be customized, they can also be
-                    made transparent by setting width and height to 0px.
+                    For a button to act like a toggle, all you have to do is add
+                    the "toggle" flag.
                 </p>
                 <p>
-                    If all nested modals have transparent backdrops, clicking
-                    outside the modal will close all nested modals.
-                </p>
-                <p>
-                    If some nested modals have transparent backdrops, clicking
-                    on a backdrop will close the associated modal and all
-                    succeeding nested modals with transparent backdrops.
+                    Clicking the open modal button the first time will open, and
+                    the second time will close (clicking anywhere outside the
+                    modal will also close the modal).
                 </p>
             </svelte:fragment>
             <svelte:fragment slot="samples">
@@ -192,7 +187,7 @@
                     <button slot="button">toggle</button>
                     <div slot="modal">
                         <div class="container">
-                            <h4>🍗🍳Things about this modal</h4>
+                            <h4>Things about this modal</h4>
                             <ol>
                                 <li>✅ active modal</li>
                                 <li>✅ layers of nested: 3/3</li>
@@ -454,6 +449,54 @@
                     </div>
                 </Modal></svelte:fragment
             >
+        </Card>
+        <Card>
+            <svelte:fragment slot="title">Fixed Position</svelte:fragment>
+            <svelte:fragment slot="desc">
+                <p>
+                    Some cases, we want a modal feature to be visually seamless.
+                    We can pin the location by passing our own parameters.
+                </p>
+                <p>
+                    {`fixed={{
+                        x: "300px",
+                        y: "4.5em"
+                    }}`}
+                </p>
+            </svelte:fragment>
+            <svelte:fragment slot="samples">
+                <Modal
+                    raw
+                    fixed={{
+                        x: "300px",
+                        y: "4.5em",
+                    }}
+                >
+                    <button slot="button">fixed</button>
+                    <div slot="modal">
+                        <div class="container">
+                            <h4>Things about this modal</h4>
+                            <ol>
+                                <li>✅ active modal</li>
+                                <li>✅ custom coordinates</li>
+                                <li>⬜ custom backdrop</li>
+                                <li>⬜ custom close button</li>
+                            </ol>
+                            <h4 class="h5">dummy input fields</h4>
+                            <div class="inputs">
+                                <input type="text" placeholder="1" />
+                                <input type="text" placeholder="2" />
+                                <input type="text" placeholder="3" />
+                                <input type="text" placeholder="4" />
+                                <input type="text" placeholder="5" />
+                                <input type="text" placeholder="6" />
+                                <input type="text" placeholder="7" />
+                                <input type="text" placeholder="8" />
+                            </div>
+                        </div>
+                    </div>
+                </Modal>
+            </svelte:fragment>
         </Card>
     </div>
     <Note>

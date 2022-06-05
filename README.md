@@ -2,8 +2,8 @@
 
 Happy Modals allows developers a stress-free experience of implementing modals (aka dialogs).
 
-* **Barebones:** To minimize design influences, Happy Modals only considers the bare minimum user accessibility requirements. This leaves room for the develoepr and designer to get creative.* 
-**Accessibility:** In addition to end-to-end Playwright tests, this package is also manually tested on all major devices against all major browser engines and major assistant technologies.
+* **Barebones:** To minimize design influences, Happy Modals only considers the bare minimum user accessibility requirements. This leaves room for the develoepr and designer to get creative.
+* **Accessibility:** In addition to end-to-end Playwright tests, this package is also manually tested on all major devices against all major browser engines and major assistant technologies.
 * **Dumb-Simple:** The most simple way to get started is creating an element with the class "modal-open" that is immediately preceeded by an element with the role="dialog" attribute.
 
 [Learn how to use Happy Modals](https://happymodals.com/docs).
