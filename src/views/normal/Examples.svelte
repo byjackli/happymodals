@@ -467,9 +467,10 @@
             <svelte:fragment slot="samples">
                 <Modal
                     raw
+                    sticky
                     fixed={{
-                        x: "300px",
-                        y: "4.5em",
+                        x: "0px",
+                        y: "0px",
                     }}
                 >
                     <button slot="button">fixed</button>

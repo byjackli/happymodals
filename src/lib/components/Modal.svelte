@@ -8,6 +8,7 @@
 
     export let raw: boolean = false, // when true, modal will not auto-create missing components
         toggle: boolean = false, // when true, the open modal button will act as a toggle
+        sticky: boolean = false, // when true, the open modal button will act as a toggle
         fixed: { x: string; y: string } = undefined, // coordinates for precise positioning of element on DOM
         dynamic: boolean = true, // when  true, inactive modal will be removed from the DOM
         preventBackdrop: boolean = false, // clicking on backdrop will not close the modal
@@ -45,7 +46,7 @@
     afterUpdate(() => {
         if (isLoading) {
             if (!isOpen) {
-                openModal(origin, container, { preventBackdrop, fixed }, close);
+                openModal(origin, container, { preventBackdrop, fixed, sticky }, close);
                 afterOpen && afterOpen();
             }
             isLoading = false;

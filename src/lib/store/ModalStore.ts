@@ -113,6 +113,7 @@ function createCSSManager(): HTMLElement {
             overflow: hidden !important;
             padding: 0px !important;
             margin: 0px !important;
+            border: unset !important;
         }
     `),
         styleNode = document.createElement("style");
@@ -179,8 +180,23 @@ function updateFocusable(modal) {
     // for (const { sibling, modal } of temp) sibling.after(modal);
 }
 
-export function openModal(origin: HTMLElement, container: HTMLElement, options: { preventBackdrop?: boolean, fixed?: { x: string, y: string } }, close: VoidFunction) {
-    const coords = options.fixed ? `top:${options.fixed.x}; left:${options.fixed.y}; ` : "",
+function updateSticky(data: { origin: HTMLElement, modal: HTMLElement, offset?: { x: string, y: string } }) {
+
+    const origin = data.origin.getBoundingClientRect(),
+        offset = data.offset,
+        coords = {
+            x: `calc(${offset.y} + ${window.scrollY + origin.height + origin.top}px)`,
+            y: `calc(${offset.x} + ${window.scrollX + origin.left}px)`,
+        };
+
+    data.modal.style.animation = "unset"
+    data.modal.style.top = coords.x
+    data.modal.style.left = coords.y
+    requestAnimationFrame(() => updateSticky(data))
+}
+
+export function openModal(origin: HTMLElement, container: HTMLElement, options: { preventBackdrop?: boolean, fixed?: { x: string, y: string }, sticky?: boolean }, close: VoidFunction) {
+    const coords = options.fixed ? `top: ${options.fixed.y}; left: ${options.fixed.x}; ` : "",
         depth = local.trackDepth += 1,
         modal = container.firstElementChild as HTMLElement,
         backdrop = container.lastElementChild as HTMLElement;
@@ -210,6 +226,10 @@ export function openModal(origin: HTMLElement, container: HTMLElement, options: 
 
     (modal.firstElementChild as HTMLElement).focus()
     local.trackDepth = depth
+
+    if (options.sticky) {
+        window.requestAnimationFrame(() => updateSticky({ origin, modal, offset: options?.fixed }))
+    }
 }
 export function closeModal() {
     local.trackDepth -= 1; // current level of modal
