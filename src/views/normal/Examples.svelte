@@ -138,9 +138,10 @@
             <svelte:fragment slot="samples">
                 <Modal>
                     <button slot="button">standard</button>
-                    <div slot="modal">
-                        <button id="custom-close1" class="modal-close">x</button
-                        >
+                    <button slot="close" id="custom-close1" class="modal-close"
+                        >x</button
+                    >
+                    <div slot="modal" class="example-styling">
                         <div class="container">
                             <h4>Things about this modal</h4>
                             <ol>
@@ -467,9 +468,10 @@
             <svelte:fragment slot="samples">
                 <Modal
                     raw
+                    sticky
                     fixed={{
-                        x: "300px",
-                        y: "4.5em",
+                        x: "0px",
+                        y: "0px",
                     }}
                 >
                     <button slot="button">fixed</button>

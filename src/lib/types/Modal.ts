@@ -11,7 +11,11 @@ export type Local = {
     trackScrollLock: {
         doc: Element,
         top: number
-    }[]
+    }[],
+    trackSticky: { 
+        depth: number, 
+        offset?: { x: string, y: string } 
+    }[],
     focusable: HTMLElement[]
 }
 
