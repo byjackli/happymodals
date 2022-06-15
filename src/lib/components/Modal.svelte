@@ -72,7 +72,7 @@
         >
             <div class="modal" role="dialog">
                 <slot name="close">
-                    <button class="modal-close {raw ? 'transparent' : null}"
+                    <button class="modal-close {raw ? 'transparent' : ""}"
                         >close</button
                     >
                 </slot>
@@ -80,7 +80,7 @@
             </div>
             <slot name="backdrop">
                 <div
-                    class="modal-backdrop {raw ? 'transparent' : null}"
+                    class="modal-backdrop {raw ? 'transparent' : ""}"
                     aria-hidden="true"
                 />
             </slot>

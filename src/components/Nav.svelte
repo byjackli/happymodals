@@ -9,7 +9,7 @@
         <Logo />
         <div class="logo-text">
             <span>happy modals{$LiteModeStore ? " (lite)" : ""}</span>
-            <span>make modals assitive-technology-friendly</span>
+            <span>make modals assistive-technology-friendly</span>
         </div>
     </a>
     <div class="rhs">

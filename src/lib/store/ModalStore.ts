@@ -4,7 +4,7 @@ import type Local from "$lib/types/Modal";
 const local: Local = {
     body: undefined, manager: undefined, focusable: undefined, trackDepth: 0,
     trackOrigin: [], trackContainer: [], trackModal: [],
-    trackPreventBackdrop: [], trackClose: [], trackResume: [], trackScrollLock: []
+    trackPreventBackdrop: [], trackClose: [], trackResume: [], trackScrollLock: [], trackSticky: []
 };
 export const ModalStore = writable({ ...local })
 
@@ -16,6 +16,7 @@ export function init(): void {
         manageCSS = createCSSManager()
 
     body.addEventListener('click', observeClicks, { capture: true });
+    body.addEventListener('scroll', observeScrolls, { capture: true, passive: true });
     body.prepend(manageModal)
     head.prepend(manageCSS)
 
@@ -27,6 +28,29 @@ export function init(): void {
 // listens for click events on modal open and close buttons
 function observeClicks(event: MouseEvent): void {
     if (local.trackDepth) listenToCloseClicks(event);
+}
+
+function observeScrolls(): void {
+    for (const data of local.trackSticky) {
+        if (!data) continue
+
+        const origin = local.trackOrigin[data.depth - 1].getBoundingClientRect(),
+            modal = local.trackModal[data.depth - 1],
+            offset = data.offset;
+
+        updateSticky(origin, modal, offset)
+    }
+}
+
+function updateSticky(origin: DOMRect, modal: HTMLElement, offset: { x: string, y: string }): void {
+    const coords = {
+        x: `calc(${offset.x} + ${window.scrollX + origin.left}px)`,
+        y: `calc(${offset.y} + ${window.scrollY + origin.height + origin.top}px)`,
+    }
+
+    modal.style.left = coords.x
+    modal.style.top = coords.y
+    modal.style.transition = "unset"
 }
 
 // handles click events not within modal
@@ -180,20 +204,6 @@ function updateFocusable(modal) {
     // for (const { sibling, modal } of temp) sibling.after(modal);
 }
 
-function updateSticky(data: { origin: HTMLElement, modal: HTMLElement, offset?: { x: string, y: string } }) {
-
-    const origin = data.origin.getBoundingClientRect(),
-        offset = data.offset,
-        coords = {
-            x: `calc(${offset.y} + ${window.scrollY + origin.height + origin.top}px)`,
-            y: `calc(${offset.x} + ${window.scrollX + origin.left}px)`,
-        };
-
-    data.modal.style.animation = "unset"
-    data.modal.style.top = coords.x
-    data.modal.style.left = coords.y
-    requestAnimationFrame(() => updateSticky(data))
-}
 
 export function openModal(origin: HTMLElement, container: HTMLElement, options: { preventBackdrop?: boolean, fixed?: { x: string, y: string }, sticky?: boolean }, close: VoidFunction) {
     const coords = options.fixed ? `top: ${options.fixed.y}; left: ${options.fixed.x}; ` : "",
@@ -228,8 +238,10 @@ export function openModal(origin: HTMLElement, container: HTMLElement, options: 
     local.trackDepth = depth
 
     if (options.sticky) {
-        window.requestAnimationFrame(() => updateSticky({ origin, modal, offset: options?.fixed }))
-    }
+        updateSticky(origin.getBoundingClientRect(), modal, options.fixed)
+        local.trackSticky.push({ depth, offset: options.fixed })
+    } else local.trackSticky.push(null)
+
 }
 export function closeModal() {
     local.trackDepth -= 1; // current level of modal
@@ -240,6 +252,7 @@ export function closeModal() {
 
     local.trackOrigin.pop()
     local.trackPreventBackdrop.pop()
+    local.trackSticky.pop()
 
     container.appendChild(modal);                            // put modal back where it was found
     container.appendChild(backdrop);                            // put modal back where it was found
