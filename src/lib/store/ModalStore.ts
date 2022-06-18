@@ -14,7 +14,7 @@ export function init(): void {
         manageCSS = createCSSManager()
 
     body.addEventListener('click', observeClicks, { capture: true });
-    body.addEventListener('scroll', observeScrolls, { capture: true, passive: true });
+    body.addEventListener('scroll', observeScrolls, { capture: false, passive: true });
     body.prepend(manageModal)
     head.prepend(manageCSS)
 
@@ -82,6 +82,8 @@ function listenToCloseClicks(event: MouseEvent) {
 function trapFocus(event: KeyboardEvent): void {
     const focusEnd = local.focusable.length - 1,
         focusCur = local.focusable.indexOf(document.activeElement as HTMLElement);
+
+    console.info({ focusEnd, l: local.focusable })
 
     if (event.key === `End` || (event.key === `Tab` && event.shiftKey && !focusCur)) {
         event.preventDefault();
@@ -177,12 +179,13 @@ function ariaHideRest(bool) {
 // return a list of focusable elements baed on passed in modal (html element)
 function updateFocusable(modal) {
     // // temporarily remove nested dialogs
-    // const modals = modal.querySelectorAll('*[role="dialog"]'),
-    //     temp = [];
-    // for (const modal of modals) {
-    //     temp.push({ sibling: modal.previousElementSibling, modal });
-    //     modal.remove();
-    // }
+    const containers = modal.querySelectorAll('*.modal-container'),
+        temp = [];
+
+    for (const container of containers) {
+        temp.push({ origin: container.parentElement, container });
+        container.remove();
+    }
 
     // update focusable with list of focusables from most recent modal
     local.focusable = [
@@ -197,7 +200,7 @@ function updateFocusable(modal) {
     ];
 
     // // re-add nested dialogs
-    // for (const { sibling, modal } of temp) sibling.after(modal);
+    temp.forEach(({ origin, container }) => origin.after(container))
 }
 
 

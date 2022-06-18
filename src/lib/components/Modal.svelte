@@ -42,19 +42,21 @@
         beforeClose && beforeClose();
         closeModal();
         isLoading = true;
-        afterClose && afterClose();
     }
     onMount(() => {
         if (!manager) init();
     });
     afterUpdate(() => {
         if (isLoading) {
-            if (!isOpen) {
-                openModal(origin, container, { preventBackdrop, fixed }, close);
-                afterOpen && afterOpen();
-            }
             isLoading = false;
             isOpen = !isOpen;
+
+            if (isOpen) {
+                openModal(origin, container, { preventBackdrop, fixed }, close);
+                afterOpen && afterOpen();
+            } else {
+                afterClose && afterClose();
+            }
         }
     });
 </script>
