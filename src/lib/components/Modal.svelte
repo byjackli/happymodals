@@ -5,11 +5,11 @@
         openModal,
         closeModal,
     } from "../store/ModalStore";
+    import type { Fixed } from "../types/Modal";
 
     export let raw: boolean = false, // when true, modal will not auto-create missing components
         toggle: boolean = false, // when true, the open modal button will act as a toggle
-        sticky: boolean = false, // when true, the open modal button will act as a toggle
-        fixed: { x: string; y: string } = undefined, // coordinates for precise positioning of element on DOM
+        fixed: Fixed = undefined, // coordinates for precise positioning of element on DOM
         dynamic: boolean = true, // when  true, inactive modal will be removed from the DOM
         preventBackdrop: boolean = false, // clicking on backdrop will not close the modal
         beforeOpen: Function | undefined = undefined, // lifecycle hook: call function before opening modal
@@ -25,7 +25,11 @@
     $: manager = $ModalStore.manager;
 
     function flex() {
-        if (toggle && $ModalStore.trackOrigin.includes(origin)) close();
+        if (
+            toggle &&
+            $ModalStore.track.find((group) => group.origin === origin)
+        )
+            close();
         else open();
     }
 
@@ -46,7 +50,7 @@
     afterUpdate(() => {
         if (isLoading) {
             if (!isOpen) {
-                openModal(origin, container, { preventBackdrop, fixed, sticky }, close);
+                openModal(origin, container, { preventBackdrop, fixed }, close);
                 afterOpen && afterOpen();
             }
             isLoading = false;
@@ -72,7 +76,7 @@
         >
             <div class="modal" role="dialog">
                 <slot name="close">
-                    <button class="modal-close {raw ? 'transparent' : ""}"
+                    <button class="modal-close {raw ? 'transparent' : ''}"
                         >close</button
                     >
                 </slot>
@@ -80,7 +84,7 @@
             </div>
             <slot name="backdrop">
                 <div
-                    class="modal-backdrop {raw ? 'transparent' : ""}"
+                    class="modal-backdrop {raw ? 'transparent' : ''}"
                     aria-hidden="true"
                 />
             </slot>

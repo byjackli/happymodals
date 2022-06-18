@@ -459,19 +459,26 @@
                     We can pin the location by passing our own parameters.
                 </p>
                 <p>
-                    {`fixed={{
-                        x: "300px",
-                        y: "4.5em"
-                    }}`}
+                    {`
+                        fixed={{
+                            offset: {
+                                top: "0px",
+                                left: "0px",
+                            },
+                            sticky: true,
+                        }}
+                    `}
                 </p>
             </svelte:fragment>
             <svelte:fragment slot="samples">
                 <Modal
                     raw
-                    sticky
                     fixed={{
-                        x: "0px",
-                        y: "0px",
+                        offset: {
+                            top: "0px",
+                            left: "0px",
+                        },
+                        sticky: true,
                     }}
                 >
                     <button slot="button">fixed</button>

@@ -1,10 +1,7 @@
 let body = undefined,           // HTMLElement of document body
     modalManager = undefined,   // HTMLElement containing all active modals
     trackDepth = 0,             // number of active modals
-    trackButton = [],           // treated as stack
-    trackBackdrop = [],         // treated as stack
-    trackModal = [],            // treated as stack
-    trackResume = [],           // treated as stack
+    track = [],
     trackScrollLock = [],       // position of scroll before locking
     focusable = undefined;      // list of focusable elements
 
@@ -54,12 +51,12 @@ function listenToCloseClicks(event) {
         clickedBackdrop = event.target.closest(".modal-backdrop"),
         clickedClose = clickedBackdrop || event.target.closest('.modal-close')?.parentElement.nextElementSibling;
 
-    function isSelf(track, clicked) { return track.indexOf(clicked) === track.length - 1 }
+    function isSelf(property, clicked) { return track.at(-1)[property] === clicked }
 
     if (!clickedClose && !clickedModal) masterkey()
-    else if (!clickedClose && !isSelf(trackModal, clickedModal)) masterkey(trackDepth - trackModal.indexOf(clickedModal) - 1)
-    else if (clickedClose && !isSelf(trackBackdrop, clickedClose)) masterkey(trackDepth - trackBackdrop.indexOf(clickedClose))
-    else if (isSelf(trackBackdrop, clickedClose)) closeModal()
+    else if (!clickedClose && !isSelf("modal", clickedModal)) masterkey(trackDepth - track.findIndex(group => group.modal === clickedModal) - 1)
+    else if (clickedClose && !isSelf("backdrop", clickedClose)) masterkey(trackDepth - track.findIndex(group => group.close === clickedClose))
+    else if (isSelf("backdrop", clickedClose)) closeModal()
 }
 // traps focus within most recent active modal
 function trapFocus(event) {
@@ -180,7 +177,8 @@ function updateFocusable(modal) {
 
 function openModal(openBtn) {
     trackDepth += 1;
-    const button = openBtn,
+    const
+        button = openBtn,
         modal = openBtn.nextElementSibling,
         backdrop = // if modal does not have a backdrop, automatically create and add one
             modal?.nextElementSibling?.classList.contains("modal-backdrop")
@@ -199,10 +197,12 @@ function openModal(openBtn) {
 
     modal.remove();                                 // remove modal from where its original location
 
-    trackResume.push(document.activeElement);       // track previous element in focus before a modal was activated
-    trackButton.push(button);                       // track the original container of each modal
-    trackModal.push(modal);                         // track each all active modals and most recent modal
-    trackBackdrop.push(backdrop);                   // track backdrop created for all current active modals
+    track.push({    // groups everything related to a modal into an object
+        button,                         // track the original container of each modal
+        modal,                          // track each all active modals and most recent modal
+        backdrop,                       // track backdrop created for all current active modals
+        resume: document.activeElement  // track previous element in focus before a modal was activated
+    })
 
     modal.setAttribute(
         'style',
@@ -221,10 +221,7 @@ function openModal(openBtn) {
 }
 function closeModal() {
     trackDepth -= 1; // current level of modal
-    const button = trackButton.pop(),
-        modal = trackModal.pop(),
-        resume = trackResume.pop(),
-        backdrop = trackBackdrop.pop();
+    const { button, modal, resume, backdrop } = track.pop()
 
     button.after(modal);                            // put modal back where it was found
     modal.classList.add("modal-inactive")           // hide modal from visual users
@@ -252,12 +249,13 @@ function masterkey(number = undefined) {
     }
 
 }
+
 function pausePreviousModal() {
-    trackModal[trackDepth - 2].setAttribute("aria-hidden", "true")
+    track.at(-1).modal.setAttribute("aria-hidden", "true")
 }
 function resumePreviousModal() {
-    trackModal[trackDepth - 1].setAttribute("aria-hidden", "false")
-    updateFocusable(trackModal[trackDepth - 1]);
+    track.at(-1).modal.setAttribute("aria-hidden", "false")
+    updateFocusable(track.at(-1).modal);
 }
 
 // window.onload = init;
