@@ -1,10 +1,8 @@
 import { writable } from "svelte/store"
-import type Local from "$lib/types/Modal";
+import type { Local, Track, Fixed, Offset } from "$lib/types/Modal";
 
 const local: Local = {
-    body: undefined, manager: undefined, focusable: undefined, trackDepth: 0,
-    trackOrigin: [], trackContainer: [], trackModal: [],
-    trackPreventBackdrop: [], trackClose: [], trackResume: [], trackScrollLock: [], trackSticky: []
+    body: undefined, manager: undefined, focusable: undefined, trackDepth: 0, track: []
 };
 export const ModalStore = writable({ ...local })
 
@@ -31,21 +29,21 @@ function observeClicks(event: MouseEvent): void {
 }
 
 function observeScrolls(): void {
-    for (const data of local.trackSticky) {
-        if (!data) continue
+    for (const group of local.track) {
+        if (!group?.fixed?.sticky) continue
 
-        const origin = local.trackOrigin[data.depth - 1].getBoundingClientRect(),
-            modal = local.trackModal[data.depth - 1],
-            offset = data.offset;
+        const origin = group.origin.getBoundingClientRect(),
+            modal = group.modal,
+            offset = group.fixed?.offset;
 
         updateSticky(origin, modal, offset)
     }
 }
 
-function updateSticky(origin: DOMRect, modal: HTMLElement, offset: { x: string, y: string }): void {
+function updateSticky(origin: DOMRect, modal: HTMLElement, offset: Offset): void {
     const coords = {
-        x: `calc(${offset.x} + ${window.scrollX + origin.left}px)`,
-        y: `calc(${offset.y} + ${window.scrollY + origin.height + origin.top}px)`,
+        x: `calc(${offset.left} + ${window.scrollX + origin.left}px)`,
+        y: `calc(${offset.top} + ${window.scrollY + origin.height + origin.top}px)`,
     }
 
     modal.style.left = coords.x
@@ -55,7 +53,7 @@ function updateSticky(origin: DOMRect, modal: HTMLElement, offset: { x: string, 
 
 // handles click events not within modal
 function listenToCloseClicks(event: MouseEvent) {
-    const origin = local.trackOrigin[local.trackOrigin.length - 1],
+    const origin = local.track.at(-1).origin,
         open = origin.firstElementChild,
         target = event.target as HTMLElement;
 
@@ -156,22 +154,20 @@ function createModalManager(): HTMLElement {
 
 // locks and unlocks previous layer from scrolling
 function scrollLock(state: boolean): void {
-    if (state) {
-        const scrollLock = Array.from(document.querySelectorAll(".modal-scroll-lock"))
-        for (const doc of scrollLock) {
-            local.trackScrollLock.push({ doc, top: doc.parentElement.scrollTop })
-            doc.parentElement.classList.add("modal-scroll-locked")
-        }
-    }
-    else {
-        for (const { doc, top } of local.trackScrollLock) {
-            doc.parentElement.classList.remove("modal-scroll-locked")
-            doc.parentElement.scrollTop = top
-        }
-        local.trackScrollLock = []
-    }
-
-
+    // if (state) {
+    //     const scrollLock = Array.from(document.querySelectorAll(".modal-scroll-lock"))
+    //     for (const doc of scrollLock) {
+    //         local.trackScrollLock.push({ doc, top: doc.parentElement.scrollTop })
+    //         doc.parentElement.classList.add("modal-scroll-locked")
+    //     }
+    // }
+    // else {
+    //     for (const { doc, top } of local.trackScrollLock) {
+    //         doc.parentElement.classList.remove("modal-scroll-locked")
+    //         doc.parentElement.scrollTop = top
+    //     }
+    //     local.trackScrollLock = []
+    // }
 }
 // toggle aria-hide for all other elements
 function ariaHideRest(bool) {
@@ -181,12 +177,13 @@ function ariaHideRest(bool) {
 // return a list of focusable elements baed on passed in modal (html element)
 function updateFocusable(modal) {
     // // temporarily remove nested dialogs
-    // const modals = modal.querySelectorAll('*[role="dialog"]'),
-    //     temp = [];
-    // for (const modal of modals) {
-    //     temp.push({ sibling: modal.previousElementSibling, modal });
-    //     modal.remove();
-    // }
+    const containers = modal.querySelectorAll('*.modal-container'),
+        temp = [];
+
+    for (const container of containers) {
+        temp.push({ origin: container.parentElement, container });
+        container.remove();
+    }
 
     // update focusable with list of focusables from most recent modal
     local.focusable = [
@@ -201,14 +198,20 @@ function updateFocusable(modal) {
     ];
 
     // // re-add nested dialogs
-    // for (const { sibling, modal } of temp) sibling.after(modal);
+    temp.forEach(({ origin, container }) => origin.after(container))
 }
 
 
-export function openModal(origin: HTMLElement, container: HTMLElement, options: { preventBackdrop?: boolean, fixed?: { x: string, y: string }, sticky?: boolean }, close: VoidFunction) {
-    const coords = options.fixed ? `top: ${options.fixed.y}; left: ${options.fixed.x}; ` : "",
+export function openModal(origin: HTMLElement, container: HTMLElement, options: { preventBackdrop?: boolean, fixed?: Fixed }, close: VoidFunction) {
+    const tracker: Track = {
+        origin,
+        container,
+        modal: container.firstElementChild as HTMLElement,
+        resume: document.activeElement as HTMLElement,
+        close
+    },
+        coords = options.fixed ? `top: ${options.fixed.offset.top}; left: ${options.fixed.offset.left}; ` : "",
         depth = local.trackDepth += 1,
-        modal = container.firstElementChild as HTMLElement,
         backdrop = container.lastElementChild as HTMLElement;
 
     updateFocusable(container);
@@ -218,60 +221,53 @@ export function openModal(origin: HTMLElement, container: HTMLElement, options: 
     }
     else pausePreviousModal()
 
-    modal.remove();                                 // remove modal from where its original location
+    tracker.modal.remove();                                 // remove modal from where its original location
+    if (options.preventBackdrop) tracker.preventBackdrop = true
+    if (options.fixed) tracker.fixed = options.fixed
 
-    local.trackResume.push(document.activeElement as HTMLElement);       // track previous element in focus before a modal was activated
-    local.trackOrigin.push(origin)
-    local.trackContainer.push(container);                         // track each all active modals and most recent modal
-    local.trackModal.push(modal);                         // track each all active modals and most recent modal
-    local.trackPreventBackdrop.push(options.preventBackdrop)
-    local.trackClose.push(close)
+    local.track.push(tracker)
 
     backdrop.setAttribute('style', `z-index: ${depth * 2 - 1};`);
-    modal.setAttribute('style', `${coords}z-index: ${depth * 2};`);
-    modal.setAttribute('id', `${depth}`);
+    tracker.modal.setAttribute('style', `${coords}z-index: ${depth * 2};`);
+    tracker.modal.setAttribute('id', `${depth}`);
     local.manager.prepend(backdrop);                 // add backdrop to Modal Manager
-    local.manager.prepend(modal);                 // add backdrop to Modal Manager
+    local.manager.prepend(tracker.modal);                 // add backdrop to Modal Manager
     ariaHideRest(true);
 
-    (modal.firstElementChild as HTMLElement).focus()
+    (tracker.modal.firstElementChild as HTMLElement).focus()
     local.trackDepth = depth
 
-    if (options.sticky) {
-        updateSticky(origin.getBoundingClientRect(), modal, options.fixed)
-        local.trackSticky.push({ depth, offset: options.fixed })
-    } else local.trackSticky.push(null)
+    if (tracker?.fixed?.sticky)
+        updateSticky(origin.getBoundingClientRect(), tracker.modal, tracker.fixed.offset)
 
 }
 export function closeModal() {
-    local.trackDepth -= 1; // current level of modal
-    const container = local.trackContainer.pop(),
-        modal = local.trackModal.pop(),
-        backdrop = modal.nextElementSibling,
-        resume = local.trackResume.pop();
+    local.trackDepth -= 1;                          // current level of modal
 
-    local.trackOrigin.pop()
-    local.trackPreventBackdrop.pop()
-    local.trackSticky.pop()
+    const
+        { modal, container, resume } = local.track.at(-1),
+        backdrop = modal.nextElementSibling;
 
-    container.appendChild(modal);                            // put modal back where it was found
-    container.appendChild(backdrop);                            // put modal back where it was found
+    container.appendChild(modal);                   // put modal back where it was found
+    container.appendChild(backdrop);                // put modal back where it was found
 
     resume.focus();
 
-    if (local.trackDepth) resumePreviousModal()           // if there are still modals, update focusable
+    if (local.trackDepth) resumePreviousModal()     // if there are still modals, update focusable
     else {                                          // perform only when last modal is closed
         local.body.removeEventListener('keydown', trapFocus);
         scrollLock(false);
         ariaHideRest(false);
     }
+    local.track.pop()
 }
 function close() {
-    const localClose = local.trackClose.pop(),
-        preventBackdrop = local.trackPreventBackdrop[local.trackPreventBackdrop.length - 1];
+    const group = local.track.at(-1),
+        localClose = group.close,
+        preventBackdrop = group.preventBackdrop;
 
     if (preventBackdrop) throw "closing modal was manually prevented"
-    if (localClose !== undefined) localClose()
+    else if (localClose) localClose()
     else closeModal()
 }
 // closes all or x number of modals at once
@@ -284,11 +280,11 @@ function masterkey(number = undefined) {
     }
 }
 function pausePreviousModal() {
-    local.trackModal[local.trackDepth - 2].setAttribute("aria-hidden", "true")
+    local.track.at(-1).modal.setAttribute("aria-hidden", "true")
 }
 function resumePreviousModal() {
-    local.trackModal[local.trackDepth - 1].setAttribute("aria-hidden", "false")
-    updateFocusable(local.trackModal[local.trackDepth - 1]);
+    local.track.at(-2).modal.setAttribute("aria-hidden", "false")
+    updateFocusable(local.track.at(-2).modal);
 }
 
 
