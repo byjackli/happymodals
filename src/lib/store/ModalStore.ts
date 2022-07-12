@@ -14,7 +14,7 @@ export function init(): void {
         manageCSS = createCSSManager()
 
     body.addEventListener('click', observeClicks, { capture: true });
-    body.addEventListener('scroll', observeScrolls, { capture: false, passive: true });
+    body.addEventListener('scroll', observeScrolls, { capture: true, passive: true });
     body.prepend(manageModal)
     head.prepend(manageCSS)
 
@@ -82,8 +82,6 @@ function listenToCloseClicks(event: MouseEvent) {
 function trapFocus(event: KeyboardEvent): void {
     const focusEnd = local.focusable.length - 1,
         focusCur = local.focusable.indexOf(document.activeElement as HTMLElement);
-
-    console.info({ focusEnd, l: local.focusable })
 
     if (event.key === `End` || (event.key === `Tab` && event.shiftKey && !focusCur)) {
         event.preventDefault();
@@ -242,7 +240,6 @@ export function openModal(origin: HTMLElement, container: HTMLElement, options: 
     if (tracker?.fixed?.sticky)
         updateSticky(origin.getBoundingClientRect(), tracker.modal, tracker.fixed.offset)
 
-
 }
 export function closeModal() {
     local.trackDepth -= 1;                          // current level of modal
@@ -262,6 +259,7 @@ export function closeModal() {
         scrollLock(false);
         ariaHideRest(false);
     }
+    local.track.pop()
 }
 function close() {
     const group = local.track.at(-1),
@@ -269,10 +267,8 @@ function close() {
         preventBackdrop = group.preventBackdrop;
 
     if (preventBackdrop) throw "closing modal was manually prevented"
-    else {
-        localClose()
-        local.track.pop()
-    }
+    else if (localClose) localClose()
+    else closeModal()
 }
 // closes all or x number of modals at once
 function masterkey(number = undefined) {
