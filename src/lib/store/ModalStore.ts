@@ -1,9 +1,11 @@
 import { writable } from "svelte/store"
-import type { Local, Track, Fixed, Offset } from "$lib/types/Modal";
+import type { Local, Track, Fixed, Offset, PreventClose } from "$lib/types/Modal";
 
 const local: Local = {
     body: undefined, manager: undefined, focusable: undefined, trackDepth: 0, track: []
 };
+let closeType: string;
+
 export const ModalStore = writable({ ...local })
 
 // initialize setp up automatic modal manager
@@ -14,6 +16,7 @@ export function init(): void {
         manageCSS = createCSSManager()
 
     body.addEventListener('click', observeClicks, { capture: true });
+    body.addEventListener('contextmenu', observeClicks, { capture: true });
     body.addEventListener('scroll', observeScrolls, { capture: true, passive: true });
     body.prepend(manageModal)
     head.prepend(manageCSS)
@@ -25,7 +28,10 @@ export function init(): void {
 
 // listens for click events on modal open and close buttons
 function observeClicks(event: MouseEvent): void {
-    if (local.trackDepth) listenToCloseClicks(event);
+    if (local.trackDepth) {
+        closeType = event.type;
+        listenToCloseClicks(event);
+    }
 }
 
 function observeScrolls(): void {
@@ -68,15 +74,12 @@ function listenToCloseClicks(event: MouseEvent) {
         depthOfBackdrop = Number.parseInt(clickedClose?.previousElementSibling.getAttribute("id"));
 
     function isSelf(clicked: number) { return clicked === local.trackDepth }
-    try {
-        if (!clickedClose && !clickedModal) masterkey()
-        else if (!clickedClose && !isSelf(depthOfModal)) masterkey(local.trackDepth - depthOfModal - 1)
-        else if (clickedClose && !isSelf(depthOfBackdrop)) masterkey(local.trackDepth - depthOfBackdrop)
-        else if (isSelf(depthOfBackdrop)) close()
-    }
-    catch (err) {
-        console.error(err)
-    }
+
+    if (!clickedClose && !clickedModal) masterkey()
+    else if (!clickedClose && !isSelf(depthOfModal)) masterkey(local.trackDepth - depthOfModal - 1)
+    else if (clickedClose && !isSelf(depthOfBackdrop)) masterkey(local.trackDepth - depthOfBackdrop)
+    else if (isSelf(depthOfBackdrop)) close()
+
 }
 // traps focus within most recent active modal
 function trapFocus(event: KeyboardEvent): void {
@@ -94,6 +97,7 @@ function trapFocus(event: KeyboardEvent): void {
         local.focusable[0].focus();
     } else if (event.key === 'Escape') {
         event.preventDefault();
+        closeType = event.type
         close();
     }
 }
@@ -201,8 +205,7 @@ function updateFocusable(modal) {
     temp.forEach(({ origin, container }) => origin.after(container))
 }
 
-
-export function openModal(origin: HTMLElement, container: HTMLElement, options: { preventBackdrop?: boolean, fixed?: Fixed }, close: VoidFunction) {
+export function openModal(origin: HTMLElement, container: HTMLElement, options: { preventBackdrop?: boolean, preventClose?: PreventClose, fixed?: Fixed }, close: VoidFunction) {
     const tracker: Track = {
         origin,
         container,
@@ -222,6 +225,7 @@ export function openModal(origin: HTMLElement, container: HTMLElement, options: 
     else pausePreviousModal()
 
     tracker.modal.remove();                                 // remove modal from where its original location
+    tracker.preventClose = options.preventClose
     if (options.preventBackdrop) tracker.preventBackdrop = true
     if (options.fixed) tracker.fixed = options.fixed
 
@@ -261,12 +265,28 @@ export function closeModal() {
     }
     local.track.pop()
 }
+
+
+function checkPreventClose(preventBackdrop, preventClose): boolean {
+    const { backdrop, contextMenu, keydown } = preventClose;
+
+    const close = (
+        ((preventBackdrop || backdrop) && closeType === "click") ||
+        (contextMenu && closeType === "contextmenu") ||
+        (keydown && closeType === "keydown")
+    )
+    closeType = undefined
+
+    return close
+}
 function close() {
     const group = local.track.at(-1),
         localClose = group.close,
+        preventClose = group.preventClose,
         preventBackdrop = group.preventBackdrop;
 
-    if (preventBackdrop) throw "closing modal was manually prevented"
+    if (checkPreventClose(preventBackdrop, preventClose)) return
+    // throw "closing modal was manually prevented"
     else if (localClose) localClose()
     else closeModal()
 }

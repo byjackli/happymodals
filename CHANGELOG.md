@@ -1,3 +1,21 @@
+## 1.1.0 (July 13, 2022)
+This update brings a breaking updates, a bugfix, and a series of new features.
+
+### New Features
+* `preventClose`: takes in options to prevent closing when pressing "esc", opening context menu (right-click), or clicking on backdrop.  
+The default values for preventClose are `{ backdrop: false, contextMenu: true, keypress: false }`.
+
+### Bugfixes
+* Fixed a bug where content in inactive static modals were able to receive focus.
+* Fixed a bug where modals with preventBackdrop cannot be closed by clicking on the `close` button
+
+### Deprecated
+* `preventBackdrop` feature is still usable, but highly recommend updating. Instead, use `preventClose` with the option `backdrop: true`.
+
+
+<br/>
+
+
 ## 1.0.0 (July 11, 2022)
 This update brings a breaking updates, a bugfix, and a series of new features.
 
