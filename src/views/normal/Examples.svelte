@@ -7,9 +7,28 @@
   export let isolated = true;
   $: modal2 = undefined;
   $: modal2State = modal2 && modal2.checkState();
+  $: contextMenu = undefined;
+  $: container = undefined;
+  $: offset = { top: "0px", left: "0px" };
+
+  function handleRightClick(event: MouseEvent) {
+    // console.info({ event, contextMenu, gr: contextMenu.checkState() });
+    offset = {
+      top: `${event.pageY}px`,
+      left: `${event.pageX - container.getBoundingClientRect().height}px`,
+    };
+
+    contextMenu.open();
+  }
+
+  $: contextMenuStatus = undefined;
+  function activateContextMenu() {
+    if (contextMenuStatus) contextMenuStatus = undefined;
+    else contextMenuStatus = handleRightClick;
+  }
 </script>
 
-<section class="examples">
+<section class="examples" on:contextmenu={contextMenuStatus}>
   {#if isolated}
     <h1 class="h3">Examples</h1>
   {:else}
@@ -437,6 +456,31 @@
       </svelte:fragment>
     </Card>
     <Card>
+      <svelte:fragment slot="title">Snap to Mouse</svelte:fragment>
+      <svelte:fragment slot="desc">
+        <p>
+          Oddly enough, there are use cases where snapping to mouse is ideal.
+        </p>
+        <p>One example is creating a custom contextmenu.</p>
+      </svelte:fragment>
+      <svelte:fragment slot="samples">
+        <button on:click={activateContextMenu}
+          >{contextMenuStatus ? "de-activate" : "activate"}</button
+        >
+        <Modal
+          bind:modal={contextMenu}
+          raw
+          dynamic={false}
+          preventClose={{ contextMenu: false }}
+          fixed={{ offset }}
+        >
+          <div slot="modal" class="contextmenu" bind:this={container}>
+            i'm a bit clingy 🤗
+          </div>
+        </Modal>
+      </svelte:fragment>
+    </Card>
+    <Card>
       <svelte:fragment slot="title">Function Calling</svelte:fragment>
       <svelte:fragment slot="desc">
         <p>
@@ -458,7 +502,6 @@
       <svelte:fragment slot="samples">
         <Modal
           afterOpen={() => {
-            console.info(modal2);
             let toOpen = setTimeout(send, 3000);
 
             function send() {
@@ -478,7 +521,7 @@
             state of modal 2: {modal2State}
             <Modal
               raw
-              preventBackdrop
+              preventClose={{ backdrop: true, keydown: true }}
               bind:modal={modal2}
               afterOpen={() => {
                 modal2State = modal2.checkState();

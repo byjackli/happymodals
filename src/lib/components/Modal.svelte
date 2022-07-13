@@ -1,13 +1,21 @@
 <script lang="ts">
   import { afterUpdate, onMount } from "svelte";
   import ModalStore, { init, openModal, closeModal } from "../store/ModalStore";
-  import type { Fixed } from "../types/Modal";
+  import type { Fixed, PreventClose } from "../types/Modal";
 
   export let raw: boolean = false, // when true, modal will not auto-create missing components
     toggle: boolean = false, // when true, the open modal button will act as a toggle
     fixed: Fixed = undefined, // coordinates for precise positioning of element on DOM
     dynamic: boolean = true, // when  true, inactive modal will be removed from the DOM
+    /**
+     * @deprecated use preventClose instead
+     */
     preventBackdrop: boolean = false, // clicking on backdrop will not close the modal
+    preventClose: PreventClose = {
+      backdrop: false,
+      contextMenu: true,
+      keydown: false,
+    },
     beforeOpen: Function | undefined = undefined, // lifecycle hook: call function before opening modal
     afterOpen: Function | undefined = undefined, // lifecycle hook: call function after opening modal
     beforeClose: Function | undefined = undefined, // lifecycle hook: call function before closing modal
@@ -54,7 +62,12 @@
       isOpen = !isOpen;
 
       if (isOpen) {
-        openModal(origin, container, { preventBackdrop, fixed }, close);
+        openModal(
+          origin,
+          container,
+          { preventClose, preventBackdrop, fixed },
+          close
+        );
         afterOpen && afterOpen();
       } else {
         afterClose && afterClose();

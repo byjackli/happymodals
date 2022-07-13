@@ -10,7 +10,11 @@ export type Track = {
     origin: HTMLElement,
     container: HTMLElement,
     modal: HTMLElement,
+    /**
+     * @deprecated use preventClose instead
+     */
     preventBackdrop?: boolean,
+    preventClose?: PreventClose,
     close: VoidFunction,
     resume: HTMLElement,
     lockScroll?: LockScroll,
@@ -27,11 +31,17 @@ export type Fixed = {
     offset?: Offset
 }
 
-export type Offset = { 
-    top: string, 
-    left: string, 
-    width?: boolean, 
+export type Offset = {
+    top: string,
+    left: string,
+    width?: boolean,
     height?: boolean
+}
+
+export type PreventClose = {
+    backdrop?: boolean,
+    contextMenu?: boolean,
+    keydown?: boolean,
 }
 
 export default Local
