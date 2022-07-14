@@ -421,6 +421,7 @@
       <svelte:fragment slot="samples">
         <Modal
           raw
+          toggle
           fixed={{
             offset: {
               top: "0px",
@@ -462,6 +463,7 @@
           Oddly enough, there are use cases where snapping to mouse is ideal.
         </p>
         <p>One example is creating a custom contextmenu.</p>
+        <p>Once activated, right-click anywhere within the "Examples" section to activate modal!</p>
       </svelte:fragment>
       <svelte:fragment slot="samples">
         <button on:click={activateContextMenu}
@@ -521,7 +523,10 @@
             state of modal 2: {modal2State}
             <Modal
               raw
-              preventClose={{ backdrop: true, keydown: true }}
+              preventClose={{
+                backdrop: true,
+                keydown: true,
+              }}
               bind:modal={modal2}
               afterOpen={() => {
                 modal2State = modal2.checkState();

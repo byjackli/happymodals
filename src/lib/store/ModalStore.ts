@@ -63,7 +63,7 @@ function listenToCloseClicks(event: MouseEvent) {
         open = origin.firstElementChild,
         target = event.target as HTMLElement;
 
-    if ((target.closest(".modal-open") as HTMLElement) === open)
+    if ((target.closest(".modal-toggle") as HTMLElement) === open)
         return 0
 
     const
@@ -124,7 +124,7 @@ function createCSSManager(): HTMLElement {
             height: 100vh; 
             background-color: rgba(0,0,0,0.8); 
         }
-        .modal-open, .modal-close {
+        .modal-toggle, .modal-open, .modal-close {
             width: fit-content;
             height: fit-content;
         }
@@ -140,6 +140,7 @@ function createCSSManager(): HTMLElement {
             padding: 0px !important;
             margin: 0px !important;
             border: unset !important;
+            display: block !important;
         }
     `),
         styleNode = document.createElement("style");
