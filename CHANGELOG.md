@@ -1,13 +1,31 @@
-## 1.1.0 (July 13, 2022)
-This update brings a breaking updates, a bugfix, and a series of new features.
-
-### New Features
-* `preventClose`: takes in options to prevent closing when pressing "esc", opening context menu (right-click), or clicking on backdrop.  
-The default values for preventClose are `{ backdrop: false, contextMenu: true, keypress: false }`.
+## 1.1.2 (July 13, 2022)
+This update brings a two bugfixes.
 
 ### Bugfixes
-* Fixed a bug where content in inactive static modals were able to receive focus.
-* Fixed a bug where modals with preventBackdrop cannot be closed by clicking on the `close` button
+* Fixed a bug where setting partial options for `preventClose` will set the other options to undefined, resulting in unexpected modal closing behaviors.
+* Fixed a bug where when a non-toggle modal is open, clicking on the open-modal closes the modal. The correct behavior is that the modal closes and immediately opens again.  
+Note that modals with `toggle` set to true will now have a button class `modal-toggle` instead of `modal-open`
+
+
+<br/>
+
+
+## 1.1.1 (July 13, 2022)
+This update brings a minor bugfix.
+
+### Bugfixes
+* Fixed an issue where in `raw` mode, there is a random blank space above the modal.
+
+
+<br/>
+
+
+## 1.1.0 (July 13, 2022)
+This update deprecates a feature with a replacement.
+
+### New Feature
+* `preventClose`: takes in options to prevent closing when pressing "esc", opening context menu (right-click), or clicking on backdrop.  
+The default values for preventClose are `{ backdrop: false, contextMenu: true, keypress: false }`.
 
 ### Deprecated
 * `preventBackdrop` feature is still usable, but highly recommend updating. Instead, use `preventClose` with the option `backdrop: true`.

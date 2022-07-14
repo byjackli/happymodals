@@ -3,6 +3,12 @@
   import ModalStore, { init, openModal, closeModal } from "../store/ModalStore";
   import type { Fixed, PreventClose } from "../types/Modal";
 
+  const preventClose_default = {
+    backdrop: false,
+    contextMenu: true,
+    keydown: false,
+  };
+
   export let raw: boolean = false, // when true, modal will not auto-create missing components
     toggle: boolean = false, // when true, the open modal button will act as a toggle
     fixed: Fixed = undefined, // coordinates for precise positioning of element on DOM
@@ -11,11 +17,7 @@
      * @deprecated use preventClose instead
      */
     preventBackdrop: boolean = false, // clicking on backdrop will not close the modal
-    preventClose: PreventClose = {
-      backdrop: false,
-      contextMenu: true,
-      keydown: false,
-    },
+    preventClose: PreventClose = preventClose_default,
     beforeOpen: Function | undefined = undefined, // lifecycle hook: call function before opening modal
     afterOpen: Function | undefined = undefined, // lifecycle hook: call function after opening modal
     beforeClose: Function | undefined = undefined, // lifecycle hook: call function before closing modal
@@ -62,10 +64,12 @@
       isOpen = !isOpen;
 
       if (isOpen) {
+        const mask = { ...preventClose_default, ...preventClose };
+
         openModal(
           origin,
           container,
-          { preventClose, preventBackdrop, fixed },
+          { preventClose: mask, preventBackdrop, fixed },
           close
         );
         afterOpen && afterOpen();
@@ -77,7 +81,7 @@
 </script>
 
 <div class="modal-origin" bind:this={origin}>
-  <div class="modal-open" on:click={flex}>
+  <div class="modal-{toggle ? 'toggle' : 'open'}" on:click={flex}>
     <slot name="button">
       {#if !raw}
         <button>open modal</button>
